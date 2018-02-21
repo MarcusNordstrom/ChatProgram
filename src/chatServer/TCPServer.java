@@ -34,6 +34,7 @@ public class TCPServer {
 		private ObjectOutputStream objectOutputStream;
 
 		public ClientHandler(Socket socket) {
+			this.socket = socket;
 		}
 
 		public void run() {
