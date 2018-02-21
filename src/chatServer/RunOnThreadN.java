@@ -1,41 +1,103 @@
 package chatServer;
 
-import java.nio.Buffer;
 import java.util.LinkedList;
 
-import javafx.concurrent.Worker;
 
 public class RunOnThreadN {
 	private Buffer<Runnable> buffer = new Buffer<Runnable>();
 	private LinkedList<Worker> workers;
+	private int nbrOfThreads;
+
+	public RunOnThreadN(int nbrOfThreads) {
+		this.nbrOfThreads = nbrOfThreads;
+	}
+
+	/*
+	 * Trådarna måste instantieras och startas. Instansvariabeln n håller antalet trådar.
+	 */
 	
-	public RunOnThreadN() {
+	public synchronized void start() {
+		Worker worker;
+		if(workers==null) {
+			workers = new LinkedList<Worker>();	
+			for(int i=0; i<nbrOfThreads; i++) {
+				worker = new Worker();
+				worker.start();
+				workers.add(worker);
+			}
+		}
 	}
-	public synchronized void start() {	
-	}
+
+	/* Trådarna bör kunna avslutas – Detta kan ske omedelbart (eventuella objekt i
+	 *bufferten exekveras ej) eller då bufferten är tömd (se alternativ stop-metod).
+	 */
+	
 	public synchronized void stop() {	
+		if(workers!=null) {
+			buffer.clear();
+			for(Worker worker : workers) {
+				worker.interrupt();
+			}
+			workers = null;
+		}
+
 	}
+
+
 	public synchronized void execute(Runnable runnable) {
+		buffer.put(runnable);
 	}
-	
-	
-	
-	
+
+
+
+
 	private class Buffer<T>{
-		private LinkedList<Runnable> buffer;
+		private LinkedList<T> buffer = new LinkedList<T>();
+
+		/*
+		 * Lägger till ett objekt i bufferten
+		 */
 		
 		public synchronized void put(T obj) {
+			buffer.addLast(obj);
+			notifyAll();
 		}
-		public synchronized T get() {
-			return null;
+
+		/*
+		 * Returnar första elementet i bufferten samt tar bort den sedan
+		 */
+
+		public synchronized T get() throws InterruptedException {
+			while(buffer.isEmpty()) {
+				wait();
+			}
+			return buffer.removeFirst();
+		}
+
+		/*
+		 * Returnar första elementet i bufferten samt tar bort den sedan
+		 */
+
+		public synchronized void clear() {
+			buffer.clear();
 		}
 	}
-	
-	
-	
+
+
+	/*
+	 * Hämtar buffer och kör den då thread inte är intrrupted.
+	 */
+
 	private class Worker extends Thread {
-		
 		public void run() {
+			while(!Thread.interrupted()) {
+				try {
+					buffer.get().run();
+				} catch(InterruptedException e) {
+					System.out.println(e);
+					break;
+				}
+			}
 		}
 	}
 }
