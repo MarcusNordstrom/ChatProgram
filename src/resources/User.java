@@ -2,7 +2,6 @@ package resources;
 
 import java.io.Serializable;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 public class User implements Serializable {
 	private String name;
