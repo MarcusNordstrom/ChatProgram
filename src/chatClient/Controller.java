@@ -67,7 +67,7 @@ public class Controller {
 	}
 
 	public void newResponse(final String response) {
-		SwingUtilities.invokeLater(new Runnable() { // behövs ej för ClientA
+		SwingUtilities.invokeLater(new Runnable() { // behï¿½vs ej fï¿½r ClientA
 			public void run() {
 				ui.setResponse(response);
 			}
@@ -76,8 +76,8 @@ public class Controller {
 
 	public static void main(String[] args) {
 		try {
-			Client clientA = new ClientA("195.178.227.53", 3440);
-			new ClientController(clientA);
+			Client clientA = new Client("195.178.227.53", 3440);
+			new ClientController(client);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
