@@ -26,10 +26,12 @@ public class UIUsers extends JPanel implements ActionListener {
 	private JTextArea taUsersOnline = new JTextArea("Anna är online");
 	private JTextArea taUsersOffline = new JTextArea("Anna är offline");
 	private JScrollPane scroll = new JScrollPane();
+	private Client client;
 
 
 
-	public UIUsers() {
+	public UIUsers(Client client) {
+		this.client = client;
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
@@ -82,18 +84,18 @@ public class UIUsers extends JPanel implements ActionListener {
 	}
 
 
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		JFrame frame = new JFrame("Chat");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		frame.setPreferredSize(new Dimension(300,600));
-		frame.add(new UIUsers());
-		frame.pack();
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		JFrame frame = new JFrame("Chat");
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+//		frame.setPreferredSize(new Dimension(300,600));
+//		frame.add(new UIUsers());
+//		frame.pack();
+//		frame.setVisible(true);
+//	}
 
 }

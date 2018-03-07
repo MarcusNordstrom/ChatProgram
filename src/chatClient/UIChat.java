@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,9 +27,10 @@ public class UIChat extends JPanel implements ActionListener {
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
 	
 	
-	private Controller controller = new Controller();
+	private Client client;
 
-	public UIChat() {
+	public UIChat(Client client) {
+		this.client = client;
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
@@ -78,24 +81,34 @@ public class UIChat extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnSend) {
 			String message = taWrite.getText().trim();
-			controller.message(message);
+			
+			try {
+				client.send(message);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		JFrame frame = new JFrame("Chat");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		frame.setPreferredSize(new Dimension(600,400));
-		frame.add(new UIChat());
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			Client client = new Client("192.168.1.55",90);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		JFrame frame = new JFrame("Chat");
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+//		frame.setPreferredSize(new Dimension(600,400));
+//		frame.add(new UIChat(client));
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		frame.setVisible(true);
+//	}
 	
 
 
