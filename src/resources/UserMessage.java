@@ -1,11 +1,13 @@
 package resources;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
 
-public class UserMessage extends Message{
+public class UserMessage extends Message implements Serializable{
+	private static final long serialVersionUID = 3765135201332970311L;
 	private String title;
 	private String content;
 	private ImageIcon image;

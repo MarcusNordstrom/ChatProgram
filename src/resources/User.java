@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.swing.ImageIcon;
 
 public class User implements Serializable {
+	private static final long serialVersionUID = 7626251507713469846L;
 	private String name;
 	private ImageIcon pic;
 
