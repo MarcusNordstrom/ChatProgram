@@ -21,9 +21,14 @@ public class TCPServer {
 	 * En trådpool instansieras och startas i konstruktorn 
 	 */
 
-	public TCPServer(int port, int nbrOfThreads) throws IOException {
+	public TCPServer(int port, int nbrOfThreads) {
 		pool = new RunOnThreadN(nbrOfThreads);
-		serverSocket = new ServerSocket(port);
+		try {
+			serverSocket = new ServerSocket(port);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		pool.start();
 		connection.start();
 	}
@@ -39,6 +44,7 @@ public class TCPServer {
 		private ObjectOutputStream objectOutputStream;
 
 		public ClientHandler(Socket socket) {
+			System.out.println("Client connected");
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
 				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
