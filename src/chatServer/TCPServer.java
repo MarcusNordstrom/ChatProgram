@@ -5,12 +5,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+
+import resources.User;
+import resources.UserMessage;
 
 public class TCPServer {
 
 	private ServerSocket serverSocket;
 	private RunOnThreadN pool;
 	private Connection connection = new Connection();
+	private ArrayList<ClientHandler> ClientList = new ArrayList<ClientHandler>();
 
 	/*
 	 * En trådpool instansieras och startas i konstruktorn 
@@ -29,7 +34,7 @@ public class TCPServer {
 	 */
 
 	public class ClientHandler implements Runnable {
-		
+		private User user;
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 
@@ -43,7 +48,21 @@ public class TCPServer {
 		}
 
 		public void run() {
-			
+			try {
+				Object obj = objectInputStream.readObject();
+				if(obj instanceof User) {
+					User readUser = (User)obj;
+					this.user = readUser;
+				}else if(obj instanceof UserMessage) {
+					
+				}
+					
+			} catch (ClassNotFoundException | IOException e) {
+				System.err.println("Could not read Object.");
+			}
+		}
+		public User getUser() {
+			return this.user;
 		}
 	}
 
@@ -59,7 +78,11 @@ public class TCPServer {
 			while(true) {
 				try  {
 					Socket socket = serverSocket.accept();
-					pool.execute(new ClientHandler(socket));
+					ClientList.add(new ClientHandler(socket));
+					for(ClientHandler client : ClientList) {
+						pool.execute(client);
+					}
+//					pool.execute(new ClientHandler(socket));
 				} catch(IOException e) { 
 					System.err.println(e);
 				}
