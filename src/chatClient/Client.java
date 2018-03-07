@@ -24,7 +24,9 @@ public class Client {
 		this.controller = controller;
 	}
 
-	public void send() throws IOException {}		// ändra
+	public void send() throws IOException {
+		
+	}		// ändra
 
 
 

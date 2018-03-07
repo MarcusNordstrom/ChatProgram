@@ -23,8 +23,9 @@ public class UIChat extends JPanel implements ActionListener {
 	private JTextArea taWrite = new JTextArea();
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
-	private String message = "";
-
+	
+	
+	private Controller controller = new Controller();
 
 	public UIChat() {
 		setLayout(new BorderLayout());
@@ -57,7 +58,7 @@ public class UIChat extends JPanel implements ActionListener {
 		taMessage.setWrapStyleWord(true);
 		taMessage.setEditable(false);
 		panel.setBackground(Color.WHITE);
-		panel.add(scroll);
+		panel.add(scroll, BorderLayout.CENTER);
 		return panel;
 	}
 
@@ -76,16 +77,14 @@ public class UIChat extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnSend) {
-			message += taWrite.getText().trim();
-			message += "\n";
-			taMessage.setText(message);
-			taWrite.setText("");
+			String message = taWrite.getText().trim();
+			controller.message(message);
 		}
 	}
 
 	public static void main(String[] args) {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -97,5 +96,7 @@ public class UIChat extends JPanel implements ActionListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
+	
+
 
 }
