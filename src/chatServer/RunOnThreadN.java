@@ -53,11 +53,9 @@ public class RunOnThreadN {
 
 	private class Buffer<T>{
 		private LinkedList<T> buffer = new LinkedList<T>();
-
 		/*
 		 * Lägger till ett objekt i bufferten
 		 */
-		
 		public synchronized void put(T obj) {
 			buffer.addLast(obj);
 			notifyAll();

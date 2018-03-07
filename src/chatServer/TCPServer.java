@@ -29,15 +29,11 @@ public class TCPServer {
 	 */
 
 	public class ClientHandler implements Runnable {
-		private Socket socket;
+		
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 
 		public ClientHandler(Socket socket) {
-			this.socket = socket;
-		}
-
-		public void run() {
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
 				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -45,17 +41,19 @@ public class TCPServer {
 				e.printStackTrace();
 			}
 		}
+
+		public void run() {
+			
+		}
 	}
 
 
 
 	public class Connection extends Thread {
-
 		/*
 		 * Efter att en klient anslutit placeras klienthanteraren i trådpoolens buffert
 		 * för att exekveras när tid finns.
 		 */
-		
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort());
 			while(true) {
