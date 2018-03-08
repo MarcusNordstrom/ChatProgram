@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
+
 import resources.Message;
 import resources.User;
 import resources.UserMessage;
@@ -42,11 +44,13 @@ public class TCPServer {
 	 */
 
 	public class ClientHandler implements Runnable {
-		private User user;
+		private User user = new User("Kek", new ImageIcon());
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
+		private Socket socket;
 
 		public ClientHandler(Socket socket) {
+			this.socket = socket;
 			System.out.println("Client connected");
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -54,28 +58,41 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			try {
+				objectOutputStream.writeObject(user);
+				System.out.println("Skickat");
+				objectOutputStream.flush();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		public void run() {
+			
+			
 			try {
-				Object obj = objectInputStream.readObject();
-				if(obj instanceof User) {
-					User readUser = (User)obj;
-					this.user = readUser;
-					OnlineMap.put(user, this);
-					//Uppdatera användarnas lista om vem som är online
-				}else if(obj instanceof UserMessage) {
-					UserMessage msg = (UserMessage)obj;
-					for(User reciver : msg.getRecivers()) {
-						if(OnlineMap.containsKey(reciver)) {
-							OnlineMap.get(reciver).send(msg);
-						} else {
-							//Implementera offline meddelande
+				if(socket.isConnected()) {
+					System.out.println("Client online");
+					Object obj = objectInputStream.readObject();
+					if(obj instanceof User) {
+						System.out.println("Cuntassfaggot");
+						User readUser = (User)obj;
+						this.user = readUser;
+						OnlineMap.put(user, this);
+						//Uppdatera användarnas lista om vem som är online
+					}else if(obj instanceof UserMessage) {
+						UserMessage msg = (UserMessage)obj;
+						for(User reciver : msg.getRecivers()) {
+							if(OnlineMap.containsKey(reciver)) {
+								OnlineMap.get(reciver).send(msg);
+							}
 						}
-						
 					}
+				} else if(!socket.isConnected()) {
+					OnlineMap.remove(user,this);
+					System.out.println("Client dissconnected");
 				}
-					
+
 			} catch (ClassNotFoundException | IOException e) {
 				System.err.println("Could not read Object.");
 			}
@@ -83,13 +100,11 @@ public class TCPServer {
 		public User getUser() {
 			return this.user;
 		}
-		
+
 		public void send(Message msg) {
-			
+
 		}
 	}
-
-
 
 	public class Connection extends Thread {
 		/*
@@ -105,8 +120,8 @@ public class TCPServer {
 					for(ClientHandler client : ClientList) {
 						pool.execute(client);
 					}
-//					pool.execute(new ClientHandler(socket));
-				} catch(IOException e) { 
+					//					pool.execute(new ClientHandler(socket));
+				} catch(IOException e) {
 					System.err.println(e);
 				}
 			}

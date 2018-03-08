@@ -1,30 +1,23 @@
 package chatClient;
 
 import java.awt.BorderLayout;
-import java.awt.Choice;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 public class UIUsers extends JPanel implements ActionListener {
-	private JLabel lblUsername = new JLabel("ABRONDIN");
-	private JButton btnLogOut = new JButton("Log out");
+	private JLabel lblUsername = new JLabel("");
 	private JLabel lblUsersOnline = new JLabel("Users online");
-	private JLabel lblUsersOffline = new JLabel("Users offline");
-	private JTextArea taUsersOnline = new JTextArea("Anna är online");
-	private JTextArea taUsersOffline = new JTextArea("Anna är offline");
+	private JLabel lblUsersOffline = new JLabel("Saved Users");
+	private JTextArea taUsersOnline = new JTextArea("");
+	private JTextArea taUsersOffline = new JTextArea("");
 	private JScrollPane scroll = new JScrollPane();
 	private Client client;
 
@@ -35,7 +28,6 @@ public class UIUsers extends JPanel implements ActionListener {
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
-		btnLogOut.addActionListener(this);
 	}
 
 
@@ -43,7 +35,6 @@ public class UIUsers extends JPanel implements ActionListener {
 		JPanel panel = new JPanel(new BorderLayout());
 		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel.add(lblUsername, BorderLayout.CENTER);
-		panel.add(btnLogOut, BorderLayout.EAST);
 		return panel;
 	}
 
@@ -78,9 +69,7 @@ public class UIUsers extends JPanel implements ActionListener {
 
 
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btnLogOut) {
-			// DISCONNECT . ÖPPNA LOGGA IN FÖNSTER
-		}
+		
 	}
 
 
