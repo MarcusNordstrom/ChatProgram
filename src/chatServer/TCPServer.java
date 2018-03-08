@@ -44,7 +44,7 @@ public class TCPServer {
 	 */
 
 	public class ClientHandler implements Runnable {
-		private User user = new User("Kek", new ImageIcon());
+		private User user;
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
@@ -58,13 +58,17 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			try {
-				objectOutputStream.writeObject(user);
-				System.out.println("Skickat");
-				objectOutputStream.flush();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			
+			/**
+			 * Test av server till client.
+			 */
+//			try {
+//				objectOutputStream.writeObject(user);
+//				System.out.println("Skickat");
+//				objectOutputStream.flush();
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 		}
 
 		public void run() {
@@ -72,14 +76,12 @@ public class TCPServer {
 			try {
 				while (true) {
 					if (socket.isConnected()) {
-						System.out.println("Client online");
+						System.out.println("Client is online");
 						Object obj = objectInputStream.readObject();
 						if (obj instanceof User) {
-							System.out.println("Cuntassfaggot");
 							User readUser = (User) obj;
 							this.user = readUser;
 							OnlineMap.put(user, this);
-							// Uppdatera användarnas lista om vem som är online
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							for (User reciver : msg.getRecivers()) {
@@ -115,7 +117,7 @@ public class TCPServer {
 		 * buffert för att exekveras när tid finns.
 		 */
 		public void run() {
-			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort());
+			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
 			while (true) {
 				try {
 					Socket socket = serverSocket.accept();
