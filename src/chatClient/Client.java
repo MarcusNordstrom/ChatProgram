@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.swing.ImageIcon;
+
+import resources.User;
 import resources.UserList;
 
 public class Client{
@@ -26,6 +29,12 @@ public class Client{
 	public void send(String message){//send message to server
 		
 		System.out.println();
+		try {
+			oos.writeObject(new User("kent", new ImageIcon()));
+			oos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}		
 
 	public void exit(){		 // ändra
@@ -70,7 +79,10 @@ public class Client{
 			}
 			try {
 				while(true) {
+					System.out.println("lyssnar");
 					response = ois.readObject();
+					System.out.println(response.toString());
+					System.out.println("mottagit");
 					//input from server
 				}
 			} catch(IOException e) {
