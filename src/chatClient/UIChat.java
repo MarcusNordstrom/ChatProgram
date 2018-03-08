@@ -78,15 +78,11 @@ public class UIChat extends JPanel implements ActionListener {
 		return panel;
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == btnSend) {
 			String message = taWrite.getText().trim();
 			
-			try {
-				client.send(message);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			client.send(message);
 		}
 	}
 
