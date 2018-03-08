@@ -23,7 +23,7 @@ public class TCPServer {
 	private HashMap<User, ClientHandler> OnlineMap = new HashMap<User, ClientHandler>();
 
 	/*
-	 * En trådpool instansieras och startas i konstruktorn 
+	 * En trådpool instansieras och startas i konstruktorn
 	 */
 
 	public TCPServer(int port, int nbrOfThreads) {
@@ -39,7 +39,7 @@ public class TCPServer {
 	}
 
 	/*
-	 * Den inre klassen ClientHandler är ingen tråd utan implementerar Runnable. 
+	 * Den inre klassen ClientHandler är ingen tråd utan implementerar Runnable.
 	 * En tråd i trådpoolen exekverar run-metoden.
 	 */
 
@@ -68,35 +68,38 @@ public class TCPServer {
 		}
 
 		public void run() {
-			
-			
+
 			try {
-				if(socket.isConnected()) {
-					System.out.println("Client online");
-					Object obj = objectInputStream.readObject();
-					if(obj instanceof User) {
-						System.out.println("Cuntassfaggot");
-						User readUser = (User)obj;
-						this.user = readUser;
-						OnlineMap.put(user, this);
-						//Uppdatera användarnas lista om vem som är online
-					}else if(obj instanceof UserMessage) {
-						UserMessage msg = (UserMessage)obj;
-						for(User reciver : msg.getRecivers()) {
-							if(OnlineMap.containsKey(reciver)) {
-								OnlineMap.get(reciver).send(msg);
+				while (true) {
+					if (socket.isConnected()) {
+						System.out.println("Client online");
+						Object obj = objectInputStream.readObject();
+						if (obj instanceof User) {
+							System.out.println("Cuntassfaggot");
+							User readUser = (User) obj;
+							this.user = readUser;
+							OnlineMap.put(user, this);
+							// Uppdatera användarnas lista om vem som är online
+						} else if (obj instanceof UserMessage) {
+							UserMessage msg = (UserMessage) obj;
+							for (User reciver : msg.getRecivers()) {
+								if (OnlineMap.containsKey(reciver)) {
+									OnlineMap.get(reciver).send(msg);
+								}
 							}
 						}
+					} else if (socket.isClosed()) {
+						//OnlineMap.remove(user, this);
+						System.out.println("Client dissconnected");
+						break;
 					}
-				} else if(!socket.isConnected()) {
-					OnlineMap.remove(user,this);
-					System.out.println("Client dissconnected");
 				}
 
 			} catch (ClassNotFoundException | IOException e) {
 				System.err.println("Could not read Object.");
 			}
 		}
+
 		public User getUser() {
 			return this.user;
 		}
@@ -108,20 +111,20 @@ public class TCPServer {
 
 	public class Connection extends Thread {
 		/*
-		 * Efter att en klient anslutit placeras klienthanteraren i trådpoolens buffert
-		 * för att exekveras när tid finns.
+		 * Efter att en klient anslutit placeras klienthanteraren i trådpoolens
+		 * buffert för att exekveras när tid finns.
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort());
-			while(true) {
-				try  {
+			while (true) {
+				try {
 					Socket socket = serverSocket.accept();
 					ClientList.add(new ClientHandler(socket));
-					for(ClientHandler client : ClientList) {
+					for (ClientHandler client : ClientList) {
 						pool.execute(client);
 					}
-					//					pool.execute(new ClientHandler(socket));
-				} catch(IOException e) {
+					// pool.execute(new ClientHandler(socket));
+				} catch (IOException e) {
 					System.err.println(e);
 				}
 			}
