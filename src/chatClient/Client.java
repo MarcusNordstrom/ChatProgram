@@ -35,6 +35,7 @@ public class Client{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		exit();
 	}		
 
 	public void exit(){		 // ändra
