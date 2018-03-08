@@ -6,7 +6,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import resources.Message;
 import resources.User;
 import resources.UserMessage;
 
@@ -16,6 +18,7 @@ public class TCPServer {
 	private RunOnThreadN pool;
 	private Connection connection = new Connection();
 	private ArrayList<ClientHandler> ClientList = new ArrayList<ClientHandler>();
+	private HashMap<User, ClientHandler> OnlineMap = new HashMap<User, ClientHandler>();
 
 	/*
 	 * En trådpool instansieras och startas i konstruktorn 
@@ -59,8 +62,18 @@ public class TCPServer {
 				if(obj instanceof User) {
 					User readUser = (User)obj;
 					this.user = readUser;
+					OnlineMap.put(user, this);
+					//Uppdatera användarnas lista om vem som är online
 				}else if(obj instanceof UserMessage) {
-					
+					UserMessage msg = (UserMessage)obj;
+					for(User reciver : msg.getRecivers()) {
+						if(OnlineMap.containsKey(reciver)) {
+							OnlineMap.get(reciver).send(msg);
+						} else {
+							//Implementera offline meddelande
+						}
+						
+					}
 				}
 					
 			} catch (ClassNotFoundException | IOException e) {
@@ -69,6 +82,10 @@ public class TCPServer {
 		}
 		public User getUser() {
 			return this.user;
+		}
+		
+		public void send(Message msg) {
+			
 		}
 	}
 
