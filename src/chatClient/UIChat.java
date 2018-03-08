@@ -6,16 +6,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class UIChat extends JPanel implements ActionListener {
@@ -25,8 +28,8 @@ public class UIChat extends JPanel implements ActionListener {
 	private JTextArea taWrite = new JTextArea();
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
-	
-	
+
+
 	private Client client;
 
 	public UIChat(Client client) {
@@ -81,31 +84,41 @@ public class UIChat extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == btnSend) {
 			String message = taWrite.getText().trim();
-			
+
 			client.send(message);
 		}
+		if(e.getSource() == btnAppend) {
+			JFileChooser filechooser = new JFileChooser();
+			int result = filechooser.showOpenDialog(null);
+			filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			filechooser.addChoosableFileFilter(new FileNameExtensionFilter("Iamges", "jpg", "png"));
+			filechooser.setAcceptAllFileFilterUsed(true);
+			if(result == JFileChooser.APPROVE_OPTION) {
+				File file = filechooser.getSelectedFile();
+
+			}
+		}
+
+		//	public static void main(String[] args) {
+		//		try {
+		//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//		}
+		//		try {
+		//			Client client = new Client("192.168.1.55",90);
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//		JFrame frame = new JFrame("Chat");
+		//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		//		frame.setPreferredSize(new Dimension(600,400));
+		//		frame.add(new UIChat(client));
+		//		frame.pack();
+		//		frame.setLocationRelativeTo(null);
+		//		frame.setVisible(true);
+		//	}
+
+
 	}
-
-//	public static void main(String[] args) {
-//		try {
-//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		try {
-//			Client client = new Client("192.168.1.55",90);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		JFrame frame = new JFrame("Chat");
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-//		frame.setPreferredSize(new Dimension(600,400));
-//		frame.add(new UIChat(client));
-//		frame.pack();
-//		frame.setLocationRelativeTo(null);
-//		frame.setVisible(true);
-//	}
-	
-
-
 }
