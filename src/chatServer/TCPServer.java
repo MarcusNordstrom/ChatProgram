@@ -45,8 +45,10 @@ public class TCPServer {
 		private User user;
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
+		private Socket socket;
 
 		public ClientHandler(Socket socket) {
+			this.socket = socket;
 			System.out.println("Client connected");
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -58,24 +60,33 @@ public class TCPServer {
 
 		public void run() {
 			try {
-				Object obj = objectInputStream.readObject();
-				if(obj instanceof User) {
-					User readUser = (User)obj;
-					this.user = readUser;
-					OnlineMap.put(user, this);
-					//Uppdatera användarnas lista om vem som är online
-				}else if(obj instanceof UserMessage) {
-					UserMessage msg = (UserMessage)obj;
-					for(User reciver : msg.getRecivers()) {
-						if(OnlineMap.containsKey(reciver)) {
-							OnlineMap.get(reciver).send(msg);
-						} else {
-							//Implementera offline meddelande
+				objectOutputStream.writeObject(user);
+				System.out.println("Skickat");
+				objectOutputStream.flush();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			try {
+				if(socket.isConnected()) {
+					Object obj = objectInputStream.readObject();
+					if(obj instanceof User) {
+						User readUser = (User)obj;
+						this.user = readUser;
+						OnlineMap.put(user, this);
+						//Uppdatera användarnas lista om vem som är online
+					}else if(obj instanceof UserMessage) {
+						UserMessage msg = (UserMessage)obj;
+						for(User reciver : msg.getRecivers()) {
+							if(OnlineMap.containsKey(reciver)) {
+								OnlineMap.get(reciver).send(msg);
+							}
 						}
-						
 					}
+				} else if(!socket.isConnected()) {
+					OnlineMap.remove(user,this);
 				}
-					
+
 			} catch (ClassNotFoundException | IOException e) {
 				System.err.println("Could not read Object.");
 			}
@@ -83,13 +94,11 @@ public class TCPServer {
 		public User getUser() {
 			return this.user;
 		}
-		
+
 		public void send(Message msg) {
-			
+
 		}
 	}
-
-
 
 	public class Connection extends Thread {
 		/*
@@ -105,8 +114,8 @@ public class TCPServer {
 					for(ClientHandler client : ClientList) {
 						pool.execute(client);
 					}
-//					pool.execute(new ClientHandler(socket));
-				} catch(IOException e) { 
+					//					pool.execute(new ClientHandler(socket));
+				} catch(IOException e) {
 					System.err.println(e);
 				}
 			}
