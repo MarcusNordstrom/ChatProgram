@@ -78,7 +78,7 @@ public class UILogIn extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btnLogIn) {
+		if(e.getSource() == btnLogIn && !(tfUsername.getText().trim().equals(""))) {
 			//if-sats
 			// om anv�ndarnamet finns = connecta & ta upp UIUsers
 			// om anv�ndarnamet inte finns = ta bort text i tfUsername.
@@ -104,42 +104,36 @@ public class UILogIn extends JPanel implements ActionListener {
 
 		}
 		if(e.getSource()==btnUserImage) {
-			JFileChooser filechooser = new JFileChooser();
-			int result = filechooser.showOpenDialog(null);
-			filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			filechooser.addChoosableFileFilter(new FileNameExtensionFilter("Iamges", "jpg", "png"));
-			filechooser.setAcceptAllFileFilterUsed(true);
-			if(result == JFileChooser.APPROVE_OPTION) {
-				File file = filechooser.getSelectedFile();
-				try {
+			try {
+				JFileChooser filechooser = new JFileChooser();
+				int result = filechooser.showOpenDialog(null);
+				if(result == JFileChooser.APPROVE_OPTION) {
+					File file = filechooser.getSelectedFile();
 					imageIcon = new ImageIcon(ImageIO.read(file));
 					System.out.println(file.toString());
 					imageIcon = new ImageIcon (imageIcon.getImage().getScaledInstance(100,100, Image.SCALE_DEFAULT));
 					btnUserImage.setIcon(imageIcon);
 					btnUserImage.setText("");
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "Wrong file format \nPlease selecet .jpg, .png, .bnp, .gif");
-					//e1.printStackTrace();
 				}
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "Wrong file format \nPlease selecet .jpg, .png, .bnp, .gif");
 			}
 		}
 	}
-
-	//	public static void main(String[] args) {
-	//		try {
-	//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-	//		} catch (Exception e) {
-	//			e.printStackTrace();
-	//		}
-	//		JFrame frame = new JFrame("Log in");
-	//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-	//		frame.setResizable(false);
-	//		frame.setPreferredSize(new Dimension(450,250));
-	//		frame.add(new UILogIn(new Client()));
-	//		frame.pack();
-	//		frame.setLocationRelativeTo(null);
-	//		frame.setVisible(true);
-	//	}
 }
 
-//HEJ 
+//	public static void main(String[] args) {
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		JFrame frame = new JFrame("Log in");
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+//		frame.setResizable(false);
+//		frame.setPreferredSize(new Dimension(450,250));
+//		frame.add(new UILogIn(new Client()));
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		frame.setVisible(true);
+//	}

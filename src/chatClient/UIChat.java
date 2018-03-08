@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,6 +30,7 @@ public class UIChat extends JPanel implements ActionListener {
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
 
+	private ImageIcon sendingImage;
 
 	private Client client;
 
@@ -39,6 +41,7 @@ public class UIChat extends JPanel implements ActionListener {
 		add(panelCenter(), BorderLayout.CENTER);
 		add(panelBottom(), BorderLayout.SOUTH);
 		btnSend.addActionListener(this);
+		btnAppend.addActionListener(this);
 	}
 
 	private void choices() {
@@ -90,11 +93,13 @@ public class UIChat extends JPanel implements ActionListener {
 		if(e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();
 			int result = filechooser.showOpenDialog(null);
-			filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			filechooser.addChoosableFileFilter(new FileNameExtensionFilter("Iamges", "jpg", "png"));
-			filechooser.setAcceptAllFileFilterUsed(true);
 			if(result == JFileChooser.APPROVE_OPTION) {
 				File file = filechooser.getSelectedFile();
+				try {
+					sendingImage = new ImageIcon(ImageIO.read(file));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 
 			}
 		}
