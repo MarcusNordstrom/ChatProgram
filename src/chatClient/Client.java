@@ -65,8 +65,13 @@ public class Client{
 		}
 	}
 	
-	public void sendUser(String username) {
-		
+	public void sendUser(User user) {
+		try {
+			oos.writeObject(user);
+			oos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 		
