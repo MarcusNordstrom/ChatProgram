@@ -49,7 +49,7 @@ public class Main {
 		
 		frame = new JFrame("Chat");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		frame.setPreferredSize(new Dimension(300,600));
+		frame.setPreferredSize(new Dimension(400,600));
 		frame.add(new UIUsers(client));
 		frame.pack();
 		frame.setVisible(true);
