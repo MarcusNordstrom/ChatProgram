@@ -94,6 +94,10 @@ public class Client {
 	 */
 	public UserList getList() {
 		ul.blankList();
+		UserList retList = new UserList();
+		for(int i = 0; i < ul.size(); i++) {
+			retList.
+		}
 		return ul;
 	}
 	
