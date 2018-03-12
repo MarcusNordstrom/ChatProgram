@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -24,7 +25,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class UIChat extends JPanel implements ActionListener {
 	private JScrollPane scroll = new JScrollPane();
-	private Choice choice = new Choice();
+	private JLabel lblReceiver = new JLabel("");
 	private JTextArea taMessage = new JTextArea("");
 	private JTextArea taWrite = new JTextArea();
 	private JButton btnSend = new JButton("Send");
@@ -44,18 +45,11 @@ public class UIChat extends JPanel implements ActionListener {
 		btnAppend.addActionListener(this);
 	}
 
-	private void choices() {
-		for(int i= 0; i <= 5; i++) {
-			choice.add(new String(""+i));
-		}
-	}
 
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(1,30));
-		choice.add(new String("Choose receiver"));
-		choices();
-		panel.add(choice, BorderLayout.CENTER);
+		panel.add(lblReceiver, BorderLayout.CENTER);
 		return panel;
 	}
 
