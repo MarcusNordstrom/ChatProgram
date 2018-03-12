@@ -49,6 +49,7 @@ public class TCPServer {
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
+		private boolean connected = true;
 
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
@@ -75,7 +76,7 @@ public class TCPServer {
 		public void run() {
 
 			try {
-				while (true) {
+				while (connected) {
 					if (socket.isConnected()) {
 						System.out.println("Client is online");
 						Object obj = objectInputStream.readObject();
@@ -97,12 +98,15 @@ public class TCPServer {
 								if (smsg.getInstruction().equals("DISSCONNECT")) {
 									System.out.println("Client Disconnecting");
 									socket.close();
-									OnlineMap.remove(user, this);
-									System.out.println("Client dissconnected");
-									break;
+									connected = false;
 								}
 							}
 						}
+						
+					} if(!connected) {
+						OnlineMap.remove(user, this);
+						System.out.println("Socket is closed");
+						break;
 					}
 
 				}
