@@ -69,7 +69,7 @@ public class Client {
 	public void sendDisconnect() {
 		System.out.println("Client disconnected");
 		try {
-			oos.writeObject(new SystemMessage(self, "DISCONNECT"));
+			oos.writeObject(new SystemMessage("DISCONNECT"));
 			oos.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
