@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class SystemMessage extends Message implements Serializable{
-
 	private Object payload;
 	private String instruction;
 	
@@ -34,8 +33,8 @@ public class SystemMessage extends Message implements Serializable{
 		this.instruction = instruction;
 	}
 	
-	public SystemMessage(User user, String instruction) {
-		super(user, null);
+	public SystemMessage(String instruction) {
+		super();
 		this.payload = null;
 		this.instruction = instruction;
 	}

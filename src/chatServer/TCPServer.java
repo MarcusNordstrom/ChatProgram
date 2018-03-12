@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 
 import resources.Message;
+import resources.SystemMessage;
 import resources.User;
 import resources.UserMessage;
 
@@ -48,6 +49,7 @@ public class TCPServer {
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
+		private boolean connected = true;
 
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
@@ -58,29 +60,30 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			/**
 			 * Test av server till client.
 			 */
-//			try {
-//				objectOutputStream.writeObject(user);
-//				System.out.println("Skickat");
-//				objectOutputStream.flush();
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
+			// try {
+			// objectOutputStream.writeObject(user);
+			// System.out.println("Skickat");
+			// objectOutputStream.flush();
+			// } catch (IOException e1) {
+			// e1.printStackTrace();
+			// }
 		}
 
 		public void run() {
 
 			try {
-				while (true) {
+				while (connected) {
 					if (socket.isConnected()) {
 						System.out.println("Client is online");
 						Object obj = objectInputStream.readObject();
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							this.user = readUser;
+							// System.out.println(user.getName() + " " + user.getPic().toString());
 							OnlineMap.put(user, this);
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
@@ -89,16 +92,30 @@ public class TCPServer {
 									OnlineMap.get(reciver).send(msg);
 								}
 							}
+						} else if (obj instanceof SystemMessage) {
+							System.out.println("Sys message receve");
+							SystemMessage smsg = (SystemMessage) obj;
+							if (smsg.getPayload() == null) {
+								System.out.println("no payload");
+								if (smsg.getInstruction().equals("DISCONNECT")) {
+									System.out.println("Client Disconnecting");
+									socket.close();
+									connected = false;
+								}
+							}
+							System.out.println("done");
 						}
-					} else if (socket.isClosed()) {
-						//OnlineMap.remove(user, this);
-						System.out.println("Client dissconnected");
+						
+					} if(!connected) {
+						OnlineMap.remove(user, this);
+						System.out.println("Socket is closed");
 						break;
 					}
+
 				}
 
 			} catch (ClassNotFoundException | IOException e) {
-				System.err.println("Could not read Object.");
+				e.getStackTrace();
 			}
 		}
 

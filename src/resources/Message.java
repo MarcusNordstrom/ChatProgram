@@ -11,6 +11,10 @@ public class Message {
 		this.recivers = recivers;
 	}
 
+	public Message() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public User getUser() {
 		return user;
 	}
