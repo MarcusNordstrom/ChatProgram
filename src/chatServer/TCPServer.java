@@ -23,34 +23,27 @@ public class TCPServer {
 	private ArrayList<ClientHandler> ClientList = new ArrayList<ClientHandler>();
 	private HashMap<User, ClientHandler> OnlineMap = new HashMap<User, ClientHandler>();
 
-	/*
-	 * En trådpool instansieras och startas i konstruktorn
-	 */
-
 	public TCPServer(int port, int nbrOfThreads) {
 		pool = new RunOnThreadN(nbrOfThreads);
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		pool.start();
 		connection.start();
 	}
 
-	/*
-	 * Den inre klassen ClientHandler är ingen tråd utan implementerar Runnable.
-	 * En tråd i trådpoolen exekverar run-metoden.
-	 */
-
 	public class ClientHandler implements Runnable {
 		private User user;
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
-		private boolean connected = true;
-
+		private boolean connected = socket.isConnected() && !socket.isClosed();
+		
+		/*
+		 * constructor, creates objectstreams of input/output streams.
+		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
 			System.out.println("Client connected");
@@ -60,60 +53,62 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			/**
-			 * Test av server till client.
-			 */
-			// try {
-			// objectOutputStream.writeObject(user);
-			// System.out.println("Skickat");
-			// objectOutputStream.flush();
-			// } catch (IOException e1) {
-			// e1.printStackTrace();
-			// }
 		}
 
 		public void run() {
 
 			try {
+				/*
+				 * boolean checks that socket is connected and not closed, if true following code is executed
+				 */
 				while (connected) {
-					if (socket.isConnected()) {
-						System.out.println("Client is online");
-						Object obj = objectInputStream.readObject();
-						if (obj instanceof User) {
-							User readUser = (User) obj;
-							this.user = readUser;
-							// System.out.println(user.getName() + " " + user.getPic().toString());
-							OnlineMap.put(user, this);
-						} else if (obj instanceof UserMessage) {
-							UserMessage msg = (UserMessage) obj;
-							for (User reciver : msg.getRecivers()) {
-								if (OnlineMap.containsKey(reciver)) {
-									OnlineMap.get(reciver).send(msg);
-								}
+					System.out.println("Client is online");
+					Object obj = objectInputStream.readObject();
+
+					/*
+					 * If the object received is an instance of the object user - defines user and puts the user and clienthandler in hashmap.
+					 */
+					if (obj instanceof User) {
+						User readUser = (User) obj;
+						this.user = readUser;
+						// System.out.println(user.getName() + " " + user.getPic().toString());
+						OnlineMap.put(user, this);
+						
+						/*
+						 * If the object received is an instance of the object UserMessage - checks what users client wants to send to
+						 * and sends the message to those users
+						 */
+					} else if (obj instanceof UserMessage) {
+						UserMessage msg = (UserMessage) obj;
+						for (User reciver : msg.getRecivers()) {
+							if (OnlineMap.containsKey(reciver)) {
+								OnlineMap.get(reciver).send(msg);
 							}
-						} else if (obj instanceof SystemMessage) {
-							System.out.println("Sys message receve");
-							SystemMessage smsg = (SystemMessage) obj;
-							if (smsg.getPayload() == null) {
-								System.out.println("no payload");
-								if (smsg.getInstruction().equals("DISCONNECT")) {
-									System.out.println("Client Disconnecting");
-									socket.close();
-									connected = false;
-								}
-							}
-							System.out.println("done");
 						}
 						
+						/*
+						 * If the object received is an instance of the object SystemMessage - checks if payload is = null and if instuction = "DISCONNECT" if true
+						 * it closes socket because the client is about to exit.
+						 */
+					} else if (obj instanceof SystemMessage) {
+						SystemMessage smsg = (SystemMessage) obj;
+						if (smsg.getPayload() == null) {
+							if (smsg.getInstruction().equals("DISCONNECT")) {
+								System.out.println("Client Disconnecting");
+								socket.close();
+								connected = false;
+							}
+						}
+						
+						/*
+						 * If client is NOT connected it removes the user and ClientHandler from the OnlineMap(HashMap)
+						 */
 					} if(!connected) {
 						OnlineMap.remove(user, this);
 						System.out.println("Socket is closed");
 						break;
 					}
-
 				}
-
 			} catch (ClassNotFoundException | IOException e) {
 				e.getStackTrace();
 			}
@@ -129,9 +124,10 @@ public class TCPServer {
 	}
 
 	public class Connection extends Thread {
+
 		/*
-		 * Efter att en klient anslutit placeras klienthanteraren i trådpoolens
-		 * buffert för att exekveras när tid finns.
+		 * Listens for connection, if connected creates new ClientHandler.
+		 * ClientHandler is placed in threadpools buffer and is executed when available.
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
@@ -142,7 +138,6 @@ public class TCPServer {
 					for (ClientHandler client : ClientList) {
 						pool.execute(client);
 					}
-					// pool.execute(new ClientHandler(socket));
 				} catch (IOException e) {
 					System.err.println(e);
 				}
