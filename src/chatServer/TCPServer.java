@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 
 import resources.Message;
+import resources.SystemMessage;
 import resources.User;
 import resources.UserMessage;
 
@@ -58,17 +59,17 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			/**
 			 * Test av server till client.
 			 */
-//			try {
-//				objectOutputStream.writeObject(user);
-//				System.out.println("Skickat");
-//				objectOutputStream.flush();
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
+			// try {
+			// objectOutputStream.writeObject(user);
+			// System.out.println("Skickat");
+			// objectOutputStream.flush();
+			// } catch (IOException e1) {
+			// e1.printStackTrace();
+			// }
 		}
 
 		public void run() {
@@ -81,6 +82,7 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							this.user = readUser;
+							// System.out.println(user.getName() + " " + user.getPic().toString());
 							OnlineMap.put(user, this);
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
@@ -89,16 +91,24 @@ public class TCPServer {
 									OnlineMap.get(reciver).send(msg);
 								}
 							}
+						} else if (obj instanceof SystemMessage) {
+							SystemMessage smsg = (SystemMessage) obj;
+							if (smsg.getPayload() == null) {
+								if (smsg.getInstruction().equals("DISSCONNECT")) {
+									System.out.println("Client Disconnecting");
+									socket.close();
+									OnlineMap.remove(user, this);
+									System.out.println("Client dissconnected");
+									break;
+								}
+							}
 						}
-					} else if (socket.isClosed()) {
-						//OnlineMap.remove(user, this);
-						System.out.println("Client dissconnected");
-						break;
 					}
+
 				}
 
 			} catch (ClassNotFoundException | IOException e) {
-				System.err.println("Could not read Object.");
+				e.getStackTrace();
 			}
 		}
 
