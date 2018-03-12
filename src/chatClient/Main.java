@@ -32,11 +32,11 @@ public class Main {
 			e.printStackTrace();
 		}
 		JFrame frame = new JFrame("Chat");
-		frame.setPreferredSize(new Dimension(600,400));
-		frame.add(new UIChat(client));
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+//		frame.setPreferredSize(new Dimension(600,400));
+//		frame.add(new UIChat(client));
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		frame.setVisible(true);
 		
 		frame = new JFrame("Log in");
 		frame.setResizable(false);
@@ -50,7 +50,7 @@ public class Main {
 		frame.setUndecorated(true);
 		frame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		frame.setPreferredSize(new Dimension(400,600));
-		frame.add(new UIUsers(client));
+		frame.add(new UIUsers(client, frame));
 		frame.pack();
 		frame.setVisible(true);
 	}

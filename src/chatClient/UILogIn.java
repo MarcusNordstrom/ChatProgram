@@ -122,18 +122,3 @@ public class UILogIn extends JPanel implements ActionListener {
 	}
 }
 
-//	public static void main(String[] args) {
-//		try {
-//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		JFrame frame = new JFrame("Log in");
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-//		frame.setResizable(false);
-//		frame.setPreferredSize(new Dimension(450,250));
-//		frame.add(new UILogIn(new Client()));
-//		frame.pack();
-//		frame.setLocationRelativeTo(null);
-//		frame.setVisible(true);
-//	}
