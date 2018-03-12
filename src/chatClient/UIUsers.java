@@ -29,7 +29,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	private JList list;
 
-	private String[] online;
+	private String[] online = new String[20];
 	
 	private JPanel panelOnline = new JPanel();
 
@@ -41,7 +41,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	
 	public void updateOnline() {
 		userList = client.getList();
-		System.out.println("" + userList.size());
+		System.out.println(userList.size());
 		online = new String[userList.size()];
 		for(int i = 0; i < userList.size(); i++) {
 			online[i] = userList.getUser(i).getName();
@@ -65,8 +65,6 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		userList = client.getList();
 		updateOnline();
 	}
-
-
 
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new GridLayout(0,3));
