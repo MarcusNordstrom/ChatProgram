@@ -93,14 +93,17 @@ public class TCPServer {
 								}
 							}
 						} else if (obj instanceof SystemMessage) {
+							System.out.println("Sys message receve");
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
-								if (smsg.getInstruction().equals("DISSCONNECT")) {
+								System.out.println("no payload");
+								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println("Client Disconnecting");
 									socket.close();
 									connected = false;
 								}
 							}
+							System.out.println("done");
 						}
 						
 					} if(!connected) {
