@@ -92,6 +92,7 @@ public class TCPServer {
 						 * 		-Puts the user and ClientHandler in HashMap-onlienMap.
 						 * 		-Puts the user in UserList - onlineList.
 						 * 		-BroadcastUserList is called.
+						 * 		-Check for offline messages
 						 */
 						if (obj instanceof User) {
 							User readUser = (User) obj;
@@ -100,7 +101,12 @@ public class TCPServer {
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
 							broadcastUserList();
-							
+							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
+							if(offlineMessageList != null) {
+								for(UserMessage message : offlineMessageList) {
+									sendMessage(socket, message);
+								}								
+							}
 							/*
 							 * If object read is an instance of UserMessage:
 							 * 		-The object is set to the type UserMessage.
@@ -111,6 +117,8 @@ public class TCPServer {
 								if (onlineMap.containsKey(msg.getReceivers().getUser(i))) {
 									sendMessage(new ArrayList<ClientHandler>(onlineMap.values()).get(i).getSocket(),
 											msg);
+								} else {
+									ow.writeMessageToFile(msg);
 								}
 							}
 							
