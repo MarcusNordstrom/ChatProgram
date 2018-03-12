@@ -93,10 +93,9 @@ public class Client {
 	 * @return UserList a list of users
 	 */
 	public UserList getList() {
-		ul.blankList();
 		UserList retList = new UserList();
 		for(int i = 0; i < ul.size(); i++) {
-			retList.
+			retList.addUser(ul.getUser(i));
 		}
 		return ul;
 	}
@@ -109,6 +108,7 @@ public class Client {
 		try {
 			oos.writeObject(user);
 			oos.flush();
+			System.out.println("Sending user to server");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -133,7 +133,7 @@ public class Client {
 					System.out.println(response.toString());
 					System.out.println("mottagit");
 					if(response instanceof UserMessage) {
-						//Read message and render on ui
+						System.out.println("RECIEVED USERMESSAGE FROM SERVER");
 					}else if(response instanceof SystemMessage) {
 						SystemMessage sm = (SystemMessage)response; 
 						if(sm.getPayload() == null) {
@@ -145,6 +145,11 @@ public class Client {
 							}
 						}
 						//Not sure what other messages the server would send
+					}
+					else if(response instanceof UserList) {
+						UserList list = (UserList)response;
+						System.out.println(list.toString());
+						ul = list.clone();
 					}
 				}
 			} catch (IOException e) {
