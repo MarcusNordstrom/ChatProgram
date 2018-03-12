@@ -7,6 +7,8 @@ import java.net.Socket;
 
 import javax.swing.ImageIcon;
 
+import javafx.beans.InvalidationListener;
+import java.util.Observable;
 import resources.SystemMessage;
 import resources.User;
 import resources.UserList;
@@ -16,7 +18,7 @@ import resources.UserMessage;
  * @author Sebastian
  *
  */
-public class Client {
+public class Client extends Observable{
 	private Socket socket;
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
@@ -82,9 +84,13 @@ public class Client {
 		if (socket != null)
 			try {
 				sendDisconnect();
+				Thread.sleep(2000);
 				socket.close();
 				System.exit(0);
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
@@ -103,18 +109,17 @@ public class Client {
 	 */
 	public void sendUser(User user) {
 		try {
-			oos.writeObject(user);
+			self = user;
+			oos.writeObject(self);
 			oos.flush();
-			System.out.println("Sending user to server");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		self = user;
 	}
 	/**
 	 * SubClass that listens to server for messages
 	 * @author Sebastian
-	 */
+	 */	
 	private class ServerListener extends Thread {
 		public void run() {
 			Object response;
@@ -130,7 +135,11 @@ public class Client {
 					System.out.println(response.toString());
 					System.out.println("mottagit");
 					if(response instanceof UserMessage) {
-						System.out.println("RECIEVED USERMESSAGE FROM SERVER");
+						UserMessage um = (UserMessage)response;
+						System.out.println("RECIEVED USERMESSAGE FROM SERVER from: " + um.getUser());
+						setChanged();
+						notifyObservers(um);
+						
 					}else if(response instanceof SystemMessage) {
 						SystemMessage sm = (SystemMessage)response; 
 						if(sm.getPayload() == null) {
@@ -145,8 +154,9 @@ public class Client {
 					}
 					else if(response instanceof UserList) {
 						UserList list = (UserList)response;
-						System.out.println(list.toString());
 						ul = list.clone();
+						setChanged();
+						notifyObservers(ul);
 					}
 				}
 			} catch (IOException e) {
@@ -156,5 +166,13 @@ public class Client {
 			}
 		}
 	}
+	public User getSelf() {
+		
+		return self.clone();
+	}
+	public ImageIcon getImg() {
+		return null;
+	}
+	
 
 }

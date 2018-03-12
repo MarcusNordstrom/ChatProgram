@@ -6,26 +6,33 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import resources.User;
 import resources.UserList;
 
-public class UIUsers extends JPanel implements ActionListener, ListSelectionListener {
+public class UIUsers extends JPanel implements ActionListener, ListSelectionListener,Observer {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
 	private JButton btnDisconnect = new JButton("Log ut");
 
 	private JLabel lblUsersOnline = new JLabel("Users online");
 	private JLabel lblSavedUsers = new JLabel("Saved users");
-
+	
+	private JTextPane tp = new JTextPane();
+	
 	private JList<String> list;
 
 	private String[] online = new String[20];
@@ -54,14 +61,17 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		btnContacts.addActionListener(this);
 		btnDisconnect.addActionListener(this);
 		
+        client.addObserver(this);
+		
 		list.addListSelectionListener(this);
 	}
 
 	private JPanel panelTop() {
-		JPanel panel = new JPanel(new GridLayout(0,3));
+		JPanel panel = new JPanel(new GridLayout(2,3));
 		panel.add(btnWrite);
 		panel.add(btnContacts);
 		panel.add(btnDisconnect);
+		panel.add(tp);
 		return panel;
 	}
 
@@ -87,7 +97,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 //			savedUsers[i] = userListSaved.getUser(i).getName();
 //		}
 		
-		list = new JList(savedUsers);
+		list = new JList<String>(savedUsers);
 		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelSavedUsers.add(lblSavedUsers, BorderLayout.NORTH);
 		panelSavedUsers.add(list, BorderLayout.CENTER);
@@ -111,21 +121,26 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 //				receiver = (String)receivers.get(i);
 //				System.out.println(receiver);
 //				System.out.println(receivers.get(i));
+//			String receiver = "Test";
+//			int[] selectedIndex = list.getSelectedIndices();
+//			System.out.println(selectedIndex.length+"" + selectedIndex);
+//			for( int i = 0; i < selectedIndex.length; i++) {	
+//			System.out.println(client.getList().getUser(list.getSelectedIndices()[i]).getName());
 			
-			String receiver = "Test";
-			int[] selectedIndex = list.getSelectedIndices();
-			System.out.println(selectedIndex.length+"" + selectedIndex);
-			for( int i = 0; i < selectedIndex.length; i++) {
-				
-				System.out.println(client.getList().getUser(list.getSelectedIndices()[i]).getName());
-				
+			
+			String receivers = tp.getText();	
+			String[] receivArr = receivers.split(",");
+			UserList retList = new UserList();
+			for(String s : receivArr) {
+				retList.addUser(new User(s, new ImageIcon()));
+			}
 				frame = new JFrame();
 				frame.setPreferredSize(new Dimension(600,400));
-				frame.add(new UIChat(client, receiver));
+				frame.add(new UIChat(client, receivers, retList));
 				frame.pack();
 				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
-			}
+//			}
 			
 		
 	
@@ -139,4 +154,25 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 
 	public void valueChanged(ListSelectionEvent e) {}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(arg instanceof UserList) {
+			System.out.println("Receive userlist from client");
+			UserList updater = (UserList)arg;
+			online = new String[(updater.size()+1)];
+			online[0] = " ";
+			for(int i=0; i<updater.size(); i++) {
+				online[(i+1)] = updater.getUser(i).getName();
+				System.out.print(online[(i+1)] + " ");
+			}
+			System.out.println();
+			
+			list = new JList<String>(online);
+			list.setSelectionMode(JList.VERTICAL);
+			list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			
+		}
+		
+	}
 }

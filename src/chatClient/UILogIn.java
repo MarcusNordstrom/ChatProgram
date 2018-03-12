@@ -93,7 +93,6 @@ public class UILogIn extends JPanel implements ActionListener {
 			if(sameUsers == 0) {
 				client.sendUser(new User(tfUsername.getText().trim(), imageIcon));
 				frame.setVisible(false);
-				System.out.println("UserCreated");
 
 			}else {
 				System.out.println("userExists");

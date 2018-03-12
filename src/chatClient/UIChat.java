@@ -22,6 +22,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import resources.User;
+import resources.UserList;
+import resources.UserMessage;
+
 
 public class UIChat extends JPanel implements ActionListener {
 	private JScrollPane scroll = new JScrollPane();
@@ -32,12 +36,15 @@ public class UIChat extends JPanel implements ActionListener {
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
 
 	private ImageIcon sendingImage;
+	private UserList receivers;
 
 	private Client client;
 
-	public UIChat(Client client, String receiver) {
+	public UIChat(Client client, String receiver, UserList retList) {
 		this.client = client;
 		lblReceiver.setText(receiver);
+		receivers = retList;
+		receivers.addUser(new User(receiver, new ImageIcon()));
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
@@ -83,7 +90,7 @@ public class UIChat extends JPanel implements ActionListener {
 		if(e.getSource() == btnSend) {
 			String message = taWrite.getText().trim();
 
-			client.send(message);
+			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 		}
 		if(e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();

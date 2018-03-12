@@ -27,7 +27,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		try {
-			client = new Client("77.53.42.147",12345);
+			//Sebbe 77.53.42.147
+			client = new Client("192.168.1.52",12345);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
