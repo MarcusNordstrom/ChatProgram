@@ -40,4 +40,8 @@ public class User implements Serializable {
 		}
 		return false;
 	}
+	
+	public User clone() {
+		return new User(this.name,this.pic);
+	}
 }

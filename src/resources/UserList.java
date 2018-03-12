@@ -53,7 +53,7 @@ public class UserList implements Serializable {
 		}
 	}
 	public User getUser(int index) {
-		return users.get(index);
+		return users.get(index).clone();
 	}
 	public User searchUser(String name) {
 		for(User list : users) {

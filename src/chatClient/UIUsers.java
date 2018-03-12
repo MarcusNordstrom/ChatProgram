@@ -2,10 +2,11 @@ package chatClient;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +26,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	private JLabel lblUsersOnline = new JLabel("Users online");
 	private JLabel lblSavedUsers = new JLabel("Saved users");
 
-	private JList list;
+	private JList<String> list;
 
 	private String[] online = new String[20];
 	private String[] savedUsers = new String[20];
@@ -71,7 +72,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 			online[i] = userListOnline.getUser(i).getName();
 		}
 
-		list = new JList(online);
+		list = new JList<String>(online);
 		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelOnline.add(lblUsersOnline, BorderLayout.NORTH);
 		panelOnline.add(list, BorderLayout.CENTER);
@@ -104,14 +105,28 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnWrite) {
-			String receiver ;
-
-			frame = new JFrame();
-			frame.setPreferredSize(new Dimension(600,400));
-			frame.add(new UIChat(client));
-			frame.pack();
-			frame.setLocationRelativeTo(null);
-			frame.setVisible(true);
+//			String receiver;
+//			List receivers = list.getSelectedValuesList();
+//			for(int i = 0; i < receivers.size(); i++) {
+//				receiver = (String)receivers.get(i);
+//				System.out.println(receiver);
+//				System.out.println(receivers.get(i));
+			
+			String receiver = "Test";
+			int[] selectedIndex = list.getSelectedIndices();
+			System.out.println(selectedIndex.length+"" + selectedIndex);
+			for( int i = 0; i < selectedIndex.length; i++) {
+				
+				System.out.println(client.getList().getUser(list.getSelectedIndices()[i]).getName());
+				
+				frame = new JFrame();
+				frame.setPreferredSize(new Dimension(600,400));
+				frame.add(new UIChat(client, receiver));
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			}
+			
 		
 	
 		} if(e.getSource() == btnContacts) {
@@ -121,7 +136,6 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		}
 
 	}
-
 
 
 	public void valueChanged(ListSelectionEvent e) {}

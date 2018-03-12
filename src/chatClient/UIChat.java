@@ -35,8 +35,9 @@ public class UIChat extends JPanel implements ActionListener {
 
 	private Client client;
 
-	public UIChat(Client client) {
+	public UIChat(Client client, String receiver) {
 		this.client = client;
+		lblReceiver.setText(receiver);
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
@@ -97,27 +98,5 @@ public class UIChat extends JPanel implements ActionListener {
 
 			}
 		}
-
-		//	public static void main(String[] args) {
-		//		try {
-		//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		//		} catch (Exception e) {
-		//			e.printStackTrace();
-		//		}
-		//		try {
-		//			Client client = new Client("192.168.1.55",90);
-		//		} catch (IOException e) {
-		//			e.printStackTrace();
-		//		}
-		//		JFrame frame = new JFrame("Chat");
-		//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		//		frame.setPreferredSize(new Dimension(600,400));
-		//		frame.add(new UIChat(client));
-		//		frame.pack();
-		//		frame.setLocationRelativeTo(null);
-		//		frame.setVisible(true);
-		//	}
-
-
 	}
 }
