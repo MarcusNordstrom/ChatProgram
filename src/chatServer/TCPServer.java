@@ -80,6 +80,7 @@ public class TCPServer {
 					if (socket.isConnected()) {
 						System.out.println("Client is online");
 						Object obj = objectInputStream.readObject();
+						
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							this.user = readUser;
