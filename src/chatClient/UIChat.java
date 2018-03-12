@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -27,7 +29,7 @@ import resources.UserList;
 import resources.UserMessage;
 
 
-public class UIChat extends JPanel implements ActionListener {
+public class UIChat extends JPanel implements ActionListener, Observer {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
 	private JTextArea taMessage = new JTextArea("");
@@ -42,6 +44,7 @@ public class UIChat extends JPanel implements ActionListener {
 
 	public UIChat(Client client, String receiver, UserList retList) {
 		this.client = client;
+		client.addObserver(this);
 		lblReceiver.setText(receiver);
 		receivers = retList;
 		receivers.addUser(new User(receiver, new ImageIcon()));
@@ -105,5 +108,15 @@ public class UIChat extends JPanel implements ActionListener {
 
 			}
 		}
+	}
+
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		if(arg1 instanceof UserMessage) {
+			UserMessage um = (UserMessage)arg1;
+			System.out.println(um.getUser() + " sent " + um.getContent());
+		}
+		
 	}
 }
