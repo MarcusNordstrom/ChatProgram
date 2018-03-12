@@ -1,10 +1,12 @@
 package resources;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-public class UserList {
+public class UserList implements Serializable {
+	private static final long serialVersionUID = 1342922532128807107L;
 	private ArrayList<User> users = new ArrayList<User>();
 	
 	public UserList(User[] users) {
