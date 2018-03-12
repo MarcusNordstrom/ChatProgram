@@ -6,14 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class UIUsers extends JPanel implements ActionListener {
+import resources.UserList;
+
+public class UIUsers extends JPanel implements ActionListener, ListSelectionListener {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
 	private JButton btnDisconnect = new JButton("Log ut");
@@ -21,10 +27,34 @@ public class UIUsers extends JPanel implements ActionListener {
 	private JLabel lblUsersOnline = new JLabel("Users online");
 	private JLabel lblSavedUsers = new JLabel("Saved users");
 
+	private JList list;
+
+	private String[] online;
+	
+	private JPanel panelOnline = new JPanel();
+
 	private JRadioButton[] radioButtonsOnline;
 	private JRadioButton[] radioButtonsSaved;
 
 	private Client client;
+	private UserList userList;
+	
+	public void updateOnline() {
+		userList = client.getList();
+		System.out.println("" + userList.size());
+		online = new String[userList.size()];
+		for(int i = 0; i < userList.size(); i++) {
+			online[i] = userList.getUser(i).getName();
+			System.out.println(userList.getUser(i).getName());
+		}
+			list.removeAll();
+			list = new JList(online);
+			list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			list.setVisibleRowCount(4);
+			list.addListSelectionListener(this);
+		
+	}
+	
 
 
 	public UIUsers(Client client) {
@@ -32,7 +62,10 @@ public class UIUsers extends JPanel implements ActionListener {
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
+		userList = client.getList();
+		updateOnline();
 	}
+
 
 
 	private JPanel panelTop() {
@@ -44,15 +77,17 @@ public class UIUsers extends JPanel implements ActionListener {
 	}
 
 	private JPanel panelOnline() {
-		JPanel panel = new JPanel(new GridLayout(6,0));	// kan man sätta antalet klienter här + 1 för vår Label? 
-		radioButtonsOnline = new JRadioButton[5];				// istället för 5 antalet inloggade klienter
-		panel.add(lblUsersOnline);
-		for (int i = 0; i < radioButtonsOnline.length; i++) {
-			radioButtonsOnline[i] = new JRadioButton("" + i);	// istället för i klientens namn
-			panel.add(radioButtonsOnline[i]);
-		}
-		return panel;
+		panelOnline = new JPanel(new BorderLayout());
+		list = new JList(online);
+		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		list.setVisibleRowCount(4);
+		list.addListSelectionListener(this);
+
+		panelOnline.add(lblUsersOnline, BorderLayout.NORTH);
+		panelOnline.add(list, BorderLayout.CENTER);
+		return panelOnline;
 	}
+
 
 	private JPanel panelSavedUsers() {
 		JPanel panel = new JPanel(new GridLayout(6,0));	// kan man sätta antalet klienter här + 1 för vår Label? 
@@ -75,6 +110,14 @@ public class UIUsers extends JPanel implements ActionListener {
 
 
 	public void actionPerformed(ActionEvent e) {
+
+	}
+
+
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 
