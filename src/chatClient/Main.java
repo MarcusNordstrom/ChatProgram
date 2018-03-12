@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JRootPane;
 import javax.swing.UIManager;
 
 /**
@@ -31,7 +32,6 @@ public class Main {
 			e.printStackTrace();
 		}
 		JFrame frame = new JFrame("Chat");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setPreferredSize(new Dimension(600,400));
 		frame.add(new UIChat(client));
 		frame.pack();
@@ -39,7 +39,6 @@ public class Main {
 		frame.setVisible(true);
 		
 		frame = new JFrame("Log in");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		frame.setResizable(false);
 		frame.setPreferredSize(new Dimension(450,250));
 		frame.add(new UILogIn(client , frame));
@@ -48,7 +47,8 @@ public class Main {
 		frame.setVisible(true);
 		
 		frame = new JFrame("Chat");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		frame.setUndecorated(true);
+		frame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		frame.setPreferredSize(new Dimension(400,600));
 		frame.add(new UIUsers(client));
 		frame.pack();
