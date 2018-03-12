@@ -23,12 +23,14 @@ public class TCPServer {
 	private ArrayList<ClientHandler> clientList = new ArrayList<ClientHandler>();
 	private HashMap<User, ClientHandler> onlineMap = new HashMap<User, ClientHandler>();
 	private UserList onlineList = new UserList();
+	private OfflineWriter ow;
 
 	/*
 	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
 	 */
 
-	public TCPServer(int port, int nbrOfThreads) {
+	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow) {
+		this.ow = ow;
 		pool = new RunOnThreadN(nbrOfThreads);
 		try {
 			serverSocket = new ServerSocket(port);
