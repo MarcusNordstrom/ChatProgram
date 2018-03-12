@@ -93,11 +93,8 @@ public class Client {
 	 * @return UserList a list of users
 	 */
 	public UserList getList() {
-		UserList retList = new UserList();
-		for(int i = 0; i < ul.size(); i++) {
-			retList.addUser(ul.getUser(i));
-		}
-		return ul;
+		UserList ret = ul.clone();
+		return ret;
 	}
 	
 	/**
