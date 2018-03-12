@@ -25,7 +25,7 @@ public class TCPServer {
 	private UserList onlineList = new UserList();
 
 	/*
-	 * En trådpool instansieras och startas i konstruktorn
+	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
 	 */
 
 	public TCPServer(int port, int nbrOfThreads) {
@@ -48,21 +48,20 @@ public class TCPServer {
 		System.out.println("All Users online: \n" + onlineList.toString());
 	}
 
-	/*
-	 * Den inre klassen ClientHandler är ingen tråd utan implementerar Runnable.
-	 * En tråd i trådpoolen exekverar run-metoden.
-	 */
 	public class ClientHandler implements Runnable {
 		private User user;
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
-		private boolean connected;
+		private boolean connected = socket.isConnected() && !socket.isClosed();
 
+		/*
+		 * Creates ObjectStreams of input/output.
+		 * writes onlieList to client.
+		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
 			System.out.println("Client connected");
-			connected = true;
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
 				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -71,24 +70,27 @@ public class TCPServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			/**
-			 * Test av server till client.
-			 */
-			// try {
-			// objectOutputStream.writeObject(user);
-			// System.out.println("Skickat");
-			// objectOutputStream.flush();
-			// } catch (IOException e1) {
-			// e1.printStackTrace();
-			// }
 		}
 
 		public void run() {
 			try {
 				while (true) {
-					if (socket.isConnected()) {
+					
+					/*
+					 * checks if socket is connected and if socket is not closed.
+					 * if true following code is executed.
+					 * 
+					 */
+					if (connected) {
 						Object obj = objectInputStream.readObject();
+						
+						/*
+						 * If object read is an instance of user:
+						 * 		-The object is set to the type user.
+						 * 		-Puts the user and ClientHandler in HashMap-onlienMap.
+						 * 		-Puts the user in UserList - onlineList.
+						 * 		-BroadcastUserList is called.
+						 */
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Recieved User: " + readUser.getName());
@@ -96,6 +98,11 @@ public class TCPServer {
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
 							broadcastUserList();
+							
+							/*
+							 * If object read is an instance of UserMessage:
+							 * 		-The object is set to the type UserMessage.
+							 */
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							for (int i = 0; i < msg.getReceivers().size(); i++) {
@@ -104,6 +111,15 @@ public class TCPServer {
 											msg);
 								}
 							}
+							
+							/*
+							 * If object read is an instance of SystemMessage:
+							 * 		-The object is set to the type SystemMessage.
+							 * 		-Checks if Payload is null.
+							 * 			If true, checks if instruction is equal to "DISCONNECT".
+							 * 		 		If true,closes socekt and removes user from onlineList,
+							 * 				removes user and ClientHandler from onlineMap.
+							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("Sys message receve");
 							SystemMessage smsg = (SystemMessage) obj;
@@ -112,7 +128,8 @@ public class TCPServer {
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println("Client Disconnecting");
 									socket.close();
-									connected = false;
+									onlineList.removeUser(user);
+									onlineMap.remove(user, this);
 								}
 							}
 						}
@@ -126,15 +143,24 @@ public class TCPServer {
 				e.printStackTrace();
 			}
 		}
-
+		
+		/*
+		 * Getter for user.
+		 */
 		public User getUser() {
 			return this.user;
 		}
 
+		/*
+		 * Getter for socket.
+		 */
 		public Socket getSocket() {
 			return this.socket;
 		}
 
+		/*
+		 * Method used to send message from one client to another.
+		 */
 		public void sendMessage(Socket socket, UserMessage message) {
 			try {
 				ObjectOutputStream send = new ObjectOutputStream(socket.getOutputStream());
@@ -145,6 +171,10 @@ public class TCPServer {
 			}
 		}
 
+		/*
+		 * Method used to broadcast UserList when new user is connected so that
+		 * every client has an updated onlineList.
+		 */
 		public void sendUserList(UserList list) {
 			try {
 				objectOutputStream.writeObject(list);
@@ -155,9 +185,10 @@ public class TCPServer {
 	}
 
 	public class Connection extends Thread {
+		
 		/*
-		 * Efter att en klient anslutit placeras klienthanteraren i trådpoolens buffert
-		 * för att exekveras när tid finns.
+		 * When client has connected a new ClientHandler is created, This ClientHandler 
+		 * is also placed in the ThreadPool.
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
@@ -175,26 +206,4 @@ public class TCPServer {
 			}
 		}
 	}
-	//
-	// public class Request extends Thread {
-	// private Socket socket;
-	// private UserMessage message;
-	// private ObjectOutputStream oos;
-	//
-	// public Request(Socket socket, UserMessage message) {
-	// this.socket = socket;
-	// this.message = message;
-	// }
-	//
-	// public void run() {
-	// System.out.println("Starting Request on " + message.getUser() + "s socket");
-	// try {
-	// oos = new ObjectOutputStream(socket.getOutputStream());
-	// oos.writeObject(this.message);
-	// oos.flush();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
 }
