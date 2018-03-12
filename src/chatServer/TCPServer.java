@@ -53,7 +53,7 @@ public class TCPServer {
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
-		private boolean connected = socket.isConnected() && !socket.isClosed();
+		private boolean connected = true;
 
 		/*
 		 * Creates ObjectStreams of input/output.
