@@ -17,6 +17,13 @@ public class UserList implements Serializable {
 	public UserList() {
 		
 	}
+	public UserList clone() {
+		UserList returnList = new UserList();
+		for(User currentUser : users) {
+			returnList.addUser(currentUser);
+		}
+		return returnList;
+	}
 	public ArrayList<User> getUser (int[] index) {
 		User user;
 		ArrayList<User> receivers = new ArrayList<User>();
@@ -59,5 +66,12 @@ public class UserList implements Serializable {
 	
 	public int size() {
 		return users.size();
+	}
+	public String toString() {
+		String message = "";
+		for(User currentUser : users) {
+			message += currentUser.getName() + "\n";
+		}
+		return message;
 	}
 }
