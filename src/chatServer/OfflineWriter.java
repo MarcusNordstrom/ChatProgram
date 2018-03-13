@@ -19,19 +19,22 @@ public class OfflineWriter extends Thread{
 		this.filename = filename;
 	}
 	
-	public void writeMessageToFile(UserMessage msg) {
+	public void writeMessageToFile(UserMessage msg, User user) {
 		ArrayList<UserMessage> messageList;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-			HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)ois.readObject();
-			if(hm.containsKey(msg.getUser())) {
-				messageList = hm.get(msg.getUser());
-			} else {
-				messageList = new ArrayList<UserMessage>();
+			Object obj = ois.readObject();
+			if(obj instanceof HashMap) {
+				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
+				if(hm.containsKey(user)) {
+					messageList = hm.get(user);
+				} else {
+					messageList = new ArrayList<UserMessage>();
+				}
+				messageList.add(msg);
+				hm.put(user, messageList);
+				oos.writeObject(hm);
 			}
-			messageList.add(msg);
-			hm.put(msg.getUser(), messageList);
-			oos.writeObject(hm);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -45,12 +48,15 @@ public class OfflineWriter extends Thread{
 		ArrayList<UserMessage> messageList = null;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-			HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)ois.readObject();
-			if(hm.containsKey(user)) {
-				messageList = hm.get(user);
-				hm.remove(user);
-			}
-			oos.writeObject(hm);
+			Object obj = ois.readObject();
+			if(obj instanceof HashMap) {
+				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
+				if(hm.containsKey(user)) {
+					messageList = hm.get(user);
+					hm.remove(user);
+				}
+				oos.writeObject(hm);
+			}	
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

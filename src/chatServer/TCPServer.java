@@ -118,7 +118,7 @@ public class TCPServer {
 									sendMessage(new ArrayList<ClientHandler>(onlineMap.values()).get(i).getSocket(),
 											msg);
 								} else {
-									ow.writeMessageToFile(msg);
+									ow.writeMessageToFile(msg, msg.getReceivers().getUser(i));
 								}
 							}
 							
