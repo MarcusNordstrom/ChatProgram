@@ -25,7 +25,6 @@ public class Client extends Observable {
 	private UserList ul = null;
 	private ServerListener sl;
 	private User self;
-	private int chattsOpen = 0;
 
 	/**
 	 * Constructor
@@ -188,6 +187,12 @@ public class Client extends Observable {
 
 			}
 		}
+	}
+
+	public void resend(UserMessage um) {
+		setChanged();
+		notifyObservers(ul);
+		
 	}
 
 }
