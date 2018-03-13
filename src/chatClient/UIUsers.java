@@ -26,14 +26,17 @@ import resources.UserList;
 public class UIUsers extends JPanel implements ActionListener, ListSelectionListener,Observer {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
-	private JButton btnDisconnect = new JButton("Log ut");
+	private JButton btnDisconnect = new JButton("Exit");
 
 	private JLabel lblUsersOnline = new JLabel("Users online");
 	private JLabel lblSavedUsers = new JLabel("Saved users");
 	
-	private JTextPane tp = new JTextPane();
+	private JTextPane writetp = new JTextPane();
 	
-	private JList<String> list;
+	private JTextPane onlinetp = new JTextPane();
+	private JTextPane offlinetp = new JTextPane();
+	
+//	private JList<String> list;
 
 	private String[] online = new String[20];
 	private String[] savedUsers = new String[20];
@@ -63,7 +66,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		
         client.addObserver(this);
 		
-		list.addListSelectionListener(this);
+//		list.addListSelectionListener(this);
 	}
 
 	private JPanel panelTop() {
@@ -71,21 +74,23 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		panel.add(btnWrite);
 		panel.add(btnContacts);
 		panel.add(btnDisconnect);
-		panel.add(tp);
+		panel.add(writetp);
 		return panel;
 	}
 
 	private JPanel panelOnline() {
 		panelOnline = new JPanel(new BorderLayout());
 		userListOnline = client.getList();
+		onlinetp.setText("");
 		for(int i=0; i<userListOnline.size(); i++) {
-			online[i] = userListOnline.getUser(i).getName();
+			onlinetp.setText(onlinetp.getText() + userListOnline.getUser(i).getName() + "\n");
 		}
-
-		list = new JList<String>(online);
-		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+//		list = new JList<String>(online);
+//		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelOnline.add(lblUsersOnline, BorderLayout.NORTH);
-		panelOnline.add(list, BorderLayout.CENTER);
+		panelOnline.add(onlinetp,BorderLayout.CENTER);
+//		panelOnline.add(list, BorderLayout.CENTER);
 		return panelOnline;
 	}
 
@@ -96,11 +101,11 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 //		for(int i=0; i<userListSaved.size(); i++) {
 //			savedUsers[i] = userListSaved.getUser(i).getName();
 //		}
-		
-		list = new JList<String>(savedUsers);
-		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//		list = new JList<String>(savedUsers);
+//		list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelSavedUsers.add(lblSavedUsers, BorderLayout.NORTH);
-		panelSavedUsers.add(list, BorderLayout.CENTER);
+		panelSavedUsers.add(offlinetp, BorderLayout.CENTER);
+//		panelSavedUsers.add(list, BorderLayout.CENTER);
 		return panelSavedUsers;
 	}
 
@@ -128,11 +133,19 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 //			System.out.println(client.getList().getUser(list.getSelectedIndices()[i]).getName());
 			
 			
-			String receivers = tp.getText();	
+			String receivers = writetp.getText();	
 			String[] receivArr = receivers.split(",");
 			UserList retList = new UserList();
+			//user inputed receivers
 			for(String s : receivArr) {
-				retList.addUser(new User(s, new ImageIcon()));
+				//compare to online users
+				for(String res : receivArr) {
+					for(int i = 0; i < userListOnline.size();i++) {
+						if(s.equals(userListOnline.getUser(i).getName())) {
+							retList.addUser(userListOnline.getUser(i));
+						}
+					}					
+				}				
 			}
 				frame = new JFrame();
 				frame.setPreferredSize(new Dimension(600,400));
@@ -159,19 +172,17 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	public void update(Observable o, Object arg) {
 		if(arg instanceof UserList) {
 			System.out.println("Receive userlist from client");
-			UserList updater = (UserList)arg;
-			online = new String[(updater.size()+1)];
-			online[0] = " ";
-			for(int i=0; i<updater.size(); i++) {
-				online[(i+1)] = updater.getUser(i).getName();
-				System.out.print(online[(i+1)] + " ");
+			userListOnline = (UserList)arg;
+			userListOnline = client.getList();
+			onlinetp.setText("");
+			for(int i=0; i<userListOnline.size(); i++) {
+				onlinetp.setText(onlinetp.getText() + userListOnline.getUser(i).getName() + "\n");
 			}
-			System.out.println();
-			
-			list = new JList<String>(online);
-			list.setSelectionMode(JList.VERTICAL);
-			list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			
+//			
+//			list = new JList<String>(online);
+//			list.setSelectionMode(JList.VERTICAL);
+//			list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//			
 		}
 		
 	}
