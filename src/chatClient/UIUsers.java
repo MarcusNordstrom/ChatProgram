@@ -212,8 +212,8 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				frame.pack();
 				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
+				chat.appendTextArea(um);
 				chattList.add(chat);
-				client.resend(um);
 			}
 		}
 

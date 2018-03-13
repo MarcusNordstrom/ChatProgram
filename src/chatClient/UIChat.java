@@ -120,7 +120,11 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	public boolean isReceiver() {
 		return isReceiver;
 	}
-
+	
+	public void appendTextArea(UserMessage message) {
+		taMessage.append(message.getUser().getName() + ":  " + message.getContent() + "\n");
+	}
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		isReceiver = false;
@@ -129,7 +133,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			System.out.println(um.toString());
 			for (int i = 0; i < receivers.size(); i++) {
 				if (um.getUser().getName().equals(lblReceiver.getText())) {
-					taMessage.append(um.getUser().getName() + ":  " + um.getContent() + "\n");
+					appendTextArea(um);
 					isReceiver = true;
 				}
 			}
