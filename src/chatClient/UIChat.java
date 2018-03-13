@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -28,7 +30,7 @@ import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
-public class UIChat extends JPanel implements ActionListener, Observer {
+public class UIChat extends JPanel implements ActionListener, KeyListener, Observer {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
 	private JTextArea taMessage = new JTextArea("");
@@ -54,6 +56,7 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 		add(panelBottom(), BorderLayout.SOUTH);
 		btnSend.addActionListener(this);
 		btnAppend.addActionListener(this);
+		taWrite.addKeyListener(this);
 	}
 
 	private JPanel panelTop() {
@@ -96,7 +99,7 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			
 			taWrite.setText("");
-			taMessage.append("You: \n" + message + "\n");
+			taMessage.append("You:  " + message + "\n");
 			
 		}
 		if (e.getSource() == btnAppend) {
@@ -126,10 +129,25 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 			System.out.println(um.toString());
 			for (int i = 0; i < receivers.size(); i++) {
 				if (um.getUser().getName().equals(lblReceiver.getText())) {
-					taMessage.append(um.getUser().getName() + ": \n" + um.getContent() + "\n");
+					taMessage.append(um.getUser().getName() + ":		" + um.getContent() + "\n");
 					isReceiver = true;
 				}
 			}
 		}
+	}
+
+	public void keyTyped(KeyEvent e) {
+	}
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			System.out.println("Sending message...1");
+			String message = taWrite.getText().trim();
+			System.out.println("2 " + message);
+			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			taWrite.setText("");
+			taMessage.append("You:  " + message + "\n");
+		}
+	}
+	public void keyReleased(KeyEvent e) {
 	}
 }
