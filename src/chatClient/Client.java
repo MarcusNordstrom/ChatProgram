@@ -93,7 +93,7 @@ public class Client extends Observable {
 		if (socket != null)
 			try {
 				sendDisconnect();
-				Thread.sleep(200);
+				Thread.sleep(2000);
 				socket.close();
 				System.exit(0);
 			} catch (IOException e) {
