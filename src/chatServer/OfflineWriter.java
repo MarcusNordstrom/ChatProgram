@@ -14,11 +14,23 @@ import resources.UserMessage;
 
 public class OfflineWriter extends Thread{
 	private String filename;
-	
+
 	public OfflineWriter(String filename) {
 		this.filename = filename;
 	}
-	
+
+	public void initfilesystem() {
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+			HashMap<User, ArrayList<UserMessage>> hm = new HashMap<User, ArrayList<UserMessage>>();
+			oos.writeObject(hm);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void writeMessageToFile(UserMessage msg, User user) {
 		ArrayList<UserMessage> messageList;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
@@ -43,7 +55,7 @@ public class OfflineWriter extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ArrayList<UserMessage> getMessages(User user) {
 		ArrayList<UserMessage> messageList = null;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
@@ -66,5 +78,5 @@ public class OfflineWriter extends Thread{
 		}
 		return messageList;
 	}
-	
+
 }
