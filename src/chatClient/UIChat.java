@@ -117,7 +117,9 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 		if(arg1 instanceof UserMessage) {
 			UserMessage um = (UserMessage)arg1;
 			System.out.println(um.toString());
-			taMessage.append(um.getContent()+"\n");
+			if(um.getUser().equals(receivers.getUser(0))){
+				taMessage.append(um.getContent()+"\n");
+			}
 		}
 		
 	}
