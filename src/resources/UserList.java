@@ -63,7 +63,9 @@ public class UserList implements Serializable {
 		}
 		return null;
 	}
-	
+	public ArrayList<User> getList(){
+		return this.users;
+	}
 	public int size() {
 		return users.size();
 	}

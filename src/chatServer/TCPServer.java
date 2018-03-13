@@ -46,8 +46,8 @@ public class TCPServer {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
 			System.out.println("Sending UserList to " + clients.getUser().getName());
+			System.out.flush();
 		}
-		System.out.println("All Users online: \n" + onlineList.toString());
 	}
 
 	public class ClientHandler implements Runnable {
@@ -58,8 +58,7 @@ public class TCPServer {
 		private boolean connected = true;
 
 		/*
-		 * Creates ObjectStreams of input/output.
-		 * writes onlieList to client.
+		 * Creates ObjectStreams of input/output. writes onlieList to client.
 		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
@@ -77,86 +76,93 @@ public class TCPServer {
 		public void run() {
 			try {
 				while (true) {
-					
+
 					/*
-					 * checks if socket is connected and if socket is not closed.
-					 * if true following code is executed.
+					 * checks if socket is connected and if socket is not closed. if true following
+					 * code is executed.
 					 * 
 					 */
 					if (connected) {
 						Object obj = objectInputStream.readObject();
-						
 						/*
-						 * If object read is an instance of user:
-						 * 		-The object is set to the type user.
-						 * 		-Puts the user and ClientHandler in HashMap-onlienMap.
-						 * 		-Puts the user in UserList - onlineList.
-						 * 		-BroadcastUserList is called.
-						 * 		-Check for offline messages
-						 */
-						if (obj instanceof User) {
-							User readUser = (User) obj;
-							System.out.println("Recieved User: " + readUser.getName());
-							user = readUser;
-							onlineMap.put(user, this);
-							onlineList.addUser(user);
-							broadcastUserList();
-							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
-							if(offlineMessageList != null) {
-								for(UserMessage message : offlineMessageList) {
-									sendMessage(socket, message);
-								}								
-							}
-							/*
-							 * If object read is an instance of UserMessage:
-							 * 		-The object is set to the type UserMessage.
-							 */
-						} else if (obj instanceof UserMessage) {
-							UserMessage msg = (UserMessage) obj;
-							for (int i = 0; i < msg.getReceivers().size(); i++) {
-								if (onlineMap.containsKey(msg.getReceivers().getUser(i))) {
-									//sendMessage(new ArrayList<ClientHandler>(onlineMap.values()).get(i).getSocket(),msg);
-									onlineMap.get(msg.getReceivers().getUser(i)).sendUserMessage(msg);
-								} else {
-									ow.writeMessageToFile(msg, msg.getReceivers().getUser(i));
+						 * If object read is an instance of user: -The object is set to the type user.
+						 * -Puts the user and ClientHandler in HashMap-onlienMap. -Puts the user in
+						 * UserList - onlineList. -BroadcastUserList is called. -Check for offline
+						 * messages
+						  */
+							if (obj instanceof User) {
+								User readUser = (User) obj;
+								System.out.println("Recieved User: " + readUser.getName());
+								System.out.flush();
+								user = readUser;
+								onlineMap.put(user, this);
+								onlineList.addUser(user);
+								broadcastUserList();
+								// ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
+								// if (offlineMessageList != null) {
+								// for (UserMessage message : offlineMessageList) {
+								// sendUserMessage(message);
+								// }
+								// }
+								/*
+								 * If object read is an instance of UserMessage: -The object is set to the type
+								 * UserMessage.
+								 */
+							} else if (obj instanceof UserMessage) {
+								UserMessage msg = (UserMessage) obj;
+								System.out.println("Incomming UserMessage!");
+								System.out.println(msg);
+								for(User client : msg.getReceivers().getList()) {
+									onlineMap.get(client).sendUserMessage(msg);
+									System.out.println("Send message to: " + client.getName());
 								}
-							}
-							
-							/*
-							 * If object read is an instance of SystemMessage:
-							 * 		-The object is set to the type SystemMessage.
-							 * 		-Checks if Payload is null.
-							 * 			If true, checks if instruction is equal to "DISCONNECT".
-							 * 		 		If true,closes socekt and removes user from onlineList,
-							 * 				removes user and ClientHandler from onlineMap.
-							 */
-						} else if (obj instanceof SystemMessage) {
-							System.out.println("Sys message receve");
-							SystemMessage smsg = (SystemMessage) obj;
-							if (smsg.getPayload() == null) {
-								System.out.println("no payload");
-								if (smsg.getInstruction().equals("DISCONNECT")) {
-									System.out.println("Client Disconnecting");
-									socket.close();
-									onlineList.removeUser(user);
-									onlineMap.remove(user, this);
-									clientList.remove(this);
-									broadcastUserList();
-									connected = false;
+//								for (int i = 0; i < msg.getReceivers().size(); i++) {
+//									if (onlineMap.containsKey(msg.getReceivers().getUser(i))) {
+//										onlineMap.get(msg.getReceivers().getUser(i)).sendUserMessage(msg);
+//										System.out.println("Incomming UserMessage!");
+//										System.out.println(msg);
+//									} else {
+//										// ow.writeMessageToFile(msg, msg.getReceivers().getUser(i));
+//									}
+
+								/*
+								 * If object read is an instance of SystemMessage: -The object is set to the
+								 * type SystemMessage. -Checks if Payload is null. If true, checks if
+								 * instruction is equal to "DISCONNECT". If true,closes socekt and removes user
+								 * from onlineList, removes user and ClientHandler from onlineMap.
+								 */
+							} else if (obj instanceof SystemMessage) {
+								System.out.println("Sys message receve");
+								System.out.flush();
+								SystemMessage smsg = (SystemMessage) obj;
+								if (smsg.getPayload() == null) {
+									System.out.println("no payload");
+									System.out.flush();
+									if (smsg.getInstruction().equals("DISCONNECT")) {
+										System.out.println("Client Disconnecting");
+										System.out.flush();
+										socket.close();
+										onlineList.removeUser(user);
+										onlineMap.remove(user, this);
+										clientList.remove(this);
+										connected = false;
+										broadcastUserList();
+									}
 								}
-							}
-						}
+							} else
+								System.out.println("Not a readable Object");
+						 }
 					}
-				}
 
-			} catch (ClassNotFoundException |
-
-					IOException e) {
+			} catch (ClassNotFoundException | IOException e) {
 				System.err.println("Could not read Object.");
+				System.err.println(e.getClass().toString());
+				System.err.flush();
 				e.printStackTrace();
 			}
+			System.out.flush();
 		}
-		
+
 		/*
 		 * Getter for user.
 		 */
@@ -165,38 +171,22 @@ public class TCPServer {
 		}
 
 		/*
-		 * Getter for socket.
-		 */
-		public Socket getSocket() {
-			return this.socket;
-		}
-
-		/*
 		 * Method used to send message from one client to another.
 		 */
-		public void sendMessage(Socket socket, UserMessage message) {
-			try {
-				ObjectOutputStream send = new ObjectOutputStream(socket.getOutputStream());
-				send.writeObject(message);
-				send.flush();
-
-			} catch (IOException e) {
-			}
-		}
-		
 		public void sendUserMessage(UserMessage message) {
 			try {
+				System.out.println("Sending UserMessage to " + user.getName());
 				objectOutputStream.writeObject(message);
 				objectOutputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 
 		/*
-		 * Method used to broadcast UserList when new user is connected so that
-		 * every client has an updated onlineList.
+		 * Method used to broadcast UserList when new user is connected so that every
+		 * client has an updated onlineList.
 		 */
 		public void sendUserList(UserList list) {
 			try {
@@ -208,9 +198,9 @@ public class TCPServer {
 	}
 
 	public class Connection extends Thread {
-		
+
 		/*
-		 * When client has connected a new ClientHandler is created, This ClientHandler 
+		 * When client has connected a new ClientHandler is created, This ClientHandler
 		 * is also placed in the ThreadPool.
 		 */
 		public void run() {
