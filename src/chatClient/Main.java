@@ -30,7 +30,7 @@ public class Main {
 			//Sebbe 77.53.42.147
 			//benji 83.248.13.179
 			//Jake 83.254.153.173
-			client = new Client("83.248.13.179",12345);
+			client = new Client("192.168.0.6",12345);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

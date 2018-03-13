@@ -73,7 +73,7 @@ public class TCPServer {
 			}
 		}
 
-		public void run() {
+		public synchronized void run() {
 			try {
 				while (true) {
 
