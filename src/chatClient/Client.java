@@ -63,7 +63,7 @@ public class Client extends Observable {
 	 * @param message
 	 */
 	public void send(UserMessage message) {
-		System.out.println("Sending " + message.getContent() + " to" + message.getUser().getName());
+		System.out.println("Sending " + message.getContent() + " to " + message.getReceivers().getUser(0).getName());
 		try {
 			oos.writeObject(message);
 			oos.flush();

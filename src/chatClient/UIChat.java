@@ -90,7 +90,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		panel.add(btnAppend, BorderLayout.WEST);
 		return panel;
 	}
-
+	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnSend) {
 			System.out.println("Sending message...1");
@@ -129,7 +129,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			System.out.println(um.toString());
 			for (int i = 0; i < receivers.size(); i++) {
 				if (um.getUser().getName().equals(lblReceiver.getText())) {
-					taMessage.append(um.getUser().getName() + ":		" + um.getContent() + "\n");
+					taMessage.append(um.getUser().getName() + ":  " + um.getContent() + "\n");
 					isReceiver = true;
 				}
 			}

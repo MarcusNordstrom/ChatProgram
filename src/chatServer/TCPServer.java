@@ -89,70 +89,65 @@ public class TCPServer {
 						 * -Puts the user and ClientHandler in HashMap-onlienMap. -Puts the user in
 						 * UserList - onlineList. -BroadcastUserList is called. -Check for offline
 						 * messages
-						  */
-							if (obj instanceof User) {
-								User readUser = (User) obj;
-								System.out.println("Recieved User: " + readUser.getName());
-								System.out.flush();
-								user = readUser;
-								onlineMap.put(user, this);
-								onlineList.addUser(user);
-								broadcastUserList();
-								// ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
-								// if (offlineMessageList != null) {
-								// for (UserMessage message : offlineMessageList) {
-								// sendUserMessage(message);
-								// }
-								// }
-								/*
-								 * If object read is an instance of UserMessage: -The object is set to the type
-								 * UserMessage.
-								 */
-							} else if (obj instanceof UserMessage) {
-								UserMessage msg = (UserMessage) obj;
-								System.out.println("Incomming UserMessage!");
-								System.out.println(msg);
-								for(User client : msg.getReceivers().getList()) {
+						 */
+						if (obj instanceof User) {
+							User readUser = (User) obj;
+							System.out.println("Recieved User: " + readUser.getName());
+							System.out.flush();
+							user = readUser;
+							onlineMap.put(user, this);
+							onlineList.addUser(user);
+							broadcastUserList();
+							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
+							if (offlineMessageList != null) {
+								for (UserMessage message : offlineMessageList) {
+									sendUserMessage(message);
+								}
+							}
+							/*
+							 * If object read is an instance of UserMessage: -The object is set to the type
+							 * UserMessage.
+							 */
+						} else if (obj instanceof UserMessage) {
+							UserMessage msg = (UserMessage) obj;
+							System.out.println("Incomming UserMessage!");
+							System.out.println(msg);
+							for (User client : msg.getReceivers().getList()) {
+								if (onlineMap.containsKey(client)) {
 									onlineMap.get(client).sendUserMessage(msg);
 									System.out.println("Send message to: " + client.getName());
-								}
-//								for (int i = 0; i < msg.getReceivers().size(); i++) {
-//									if (onlineMap.containsKey(msg.getReceivers().getUser(i))) {
-//										onlineMap.get(msg.getReceivers().getUser(i)).sendUserMessage(msg);
-//										System.out.println("Incomming UserMessage!");
-//										System.out.println(msg);
-//									} else {
-//										// ow.writeMessageToFile(msg, msg.getReceivers().getUser(i));
-//									}
+								}else
+									ow.writeMessageToFile(msg, client);
+							}
 
-								/*
-								 * If object read is an instance of SystemMessage: -The object is set to the
-								 * type SystemMessage. -Checks if Payload is null. If true, checks if
-								 * instruction is equal to "DISCONNECT". If true,closes socekt and removes user
-								 * from onlineList, removes user and ClientHandler from onlineMap.
-								 */
-							} else if (obj instanceof SystemMessage) {
-								System.out.println("Sys message receve");
+							/*
+							 * If object read is an instance of SystemMessage: -The object is set to the
+							 * type SystemMessage. -Checks if Payload is null. If true, checks if
+							 * instruction is equal to "DISCONNECT". If true,closes socekt and removes user
+							 * from onlineList, removes user and ClientHandler from onlineMap.
+							 */
+						} else if (obj instanceof SystemMessage) {
+							System.out.println("Sys message receve");
+							System.out.flush();
+							SystemMessage smsg = (SystemMessage) obj;
+							if (smsg.getPayload() == null) {
+								System.out.println("no payload");
 								System.out.flush();
-								SystemMessage smsg = (SystemMessage) obj;
-								if (smsg.getPayload() == null) {
-									System.out.println("no payload");
+								if (smsg.getInstruction().equals("DISCONNECT")) {
+									System.out.println("Client Disconnecting");
 									System.out.flush();
-									if (smsg.getInstruction().equals("DISCONNECT")) {
-										System.out.println("Client Disconnecting");
-										System.out.flush();
-										socket.close();
-										onlineList.removeUser(user);
-										onlineMap.remove(user, this);
-										clientList.remove(this);
-										connected = false;
-										broadcastUserList();
-									}
+									socket.close();
+									onlineList.removeUser(user);
+									onlineMap.remove(user, this);
+									clientList.remove(this);
+									connected = false;
+									broadcastUserList();
 								}
-							} else
-								System.out.println("Not a readable Object");
-						 }
+							}
+						} else
+							System.out.println("Not a readable Object");
 					}
+				}
 
 			} catch (ClassNotFoundException | IOException e) {
 				System.err.println("Could not read Object.");
