@@ -115,8 +115,8 @@ public class TCPServer {
 							UserMessage msg = (UserMessage) obj;
 							for (int i = 0; i < msg.getReceivers().size(); i++) {
 								if (onlineMap.containsKey(msg.getReceivers().getUser(i))) {
-									sendMessage(new ArrayList<ClientHandler>(onlineMap.values()).get(i).getSocket(),
-											msg);
+									//sendMessage(new ArrayList<ClientHandler>(onlineMap.values()).get(i).getSocket(),msg);
+									onlineMap.get(msg.getReceivers().getUser(i)).sendUserMessage(msg);
 								} else {
 									ow.writeMessageToFile(msg, msg.getReceivers().getUser(i));
 								}
@@ -180,6 +180,16 @@ public class TCPServer {
 
 			} catch (IOException e) {
 			}
+		}
+		
+		public void sendUserMessage(UserMessage message) {
+			try {
+				objectOutputStream.writeObject(message);
+				objectOutputStream.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 
 		/*
