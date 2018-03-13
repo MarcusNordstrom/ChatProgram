@@ -41,6 +41,7 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 	private UserList receivers;
 
 	private Client client;
+	private boolean isReceiver = false;
 
 	public UIChat(Client client, String receiver, UserList retList) {
 		this.client = client;
@@ -110,7 +111,10 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 			}
 		}
 	}
-
+	
+	public boolean isReceiver() {
+		return isReceiver;
+	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -119,6 +123,9 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 			System.out.println(um.toString());
 			if(um.getUser().equals(receivers.getUser(0))){
 				taMessage.append(um.getContent()+"\n");
+				isReceiver = true;
+			}else {
+				isReceiver  = false;
 			}
 		}
 		

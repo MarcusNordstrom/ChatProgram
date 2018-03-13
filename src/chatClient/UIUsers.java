@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import resources.User;
 import resources.UserList;
+import resources.UserMessage;
 
 /**
  * This is the interface for users to see other online users and saved contacts. 
@@ -56,6 +58,9 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	private Client client;
 	private UserList userListOnline;
 	private UserList userListSaved;
+	
+	private ArrayList<UIChat> chattList = new ArrayList<UIChat>();
+	
 
 
 	public UIUsers(Client client, JFrame frame) {
@@ -153,12 +158,16 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 					}					
 				}				
 			}
+			
+				UIChat chat = new UIChat(client, receivers, retList);
 				frame = new JFrame();
 				frame.setPreferredSize(new Dimension(600,400));
-				frame.add(new UIChat(client, receivers, retList));
+				frame.add(chat);
 				frame.pack();
 				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
+				chattList.add(chat);
+				
 //			}
 			
 		
@@ -189,6 +198,31 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 //			list.setSelectionMode(JList.VERTICAL);
 //			list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 //			
+		}else if(arg instanceof UserMessage){
+			UserMessage um = (UserMessage)arg;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			int i = 0;
+			for(UIChat frame : chattList) {
+				if(frame.isReceiver()) {
+					i++;
+				}
+			}
+			if(i==0) {
+				UserList ul = new UserList();
+				ul.addUser(um.getUser());
+				UIChat chat = new UIChat(client,um.getUser().getName() , ul);
+				frame = new JFrame();
+				frame.setPreferredSize(new Dimension(600,400));
+				frame.add(chat);
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+				chattList.add(chat);
+			}
 		}
 		
 	}
