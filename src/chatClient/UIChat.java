@@ -28,7 +28,6 @@ import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
-
 public class UIChat extends JPanel implements ActionListener, Observer {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
@@ -48,7 +47,7 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 		client.addObserver(this);
 		lblReceiver.setText(receiver);
 		receivers = retList;
-//		receivers.addUser(new User(receiver, new ImageIcon()));
+		// receivers.addUser(new User(receiver, new ImageIcon()));
 		setLayout(new BorderLayout());
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
@@ -57,10 +56,9 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 		btnAppend.addActionListener(this);
 	}
 
-
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setPreferredSize(new Dimension(1,30));
+		panel.setPreferredSize(new Dimension(1, 30));
 		panel.add(lblReceiver, BorderLayout.CENTER);
 		return panel;
 	}
@@ -79,7 +77,7 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 
 	private JPanel panelBottom() {
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setPreferredSize(new Dimension(1,80));
+		panel.setPreferredSize(new Dimension(1, 80));
 		scroll = new JScrollPane(taWrite);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		taWrite.setLineWrap(true);
@@ -90,17 +88,17 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 		return panel;
 	}
 
-	public void actionPerformed(ActionEvent e){
-		if(e.getSource() == btnSend) {
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnSend) {
 			String message = taWrite.getText().trim();
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			taWrite.setText("");
 			taMessage.append("You: \n" + message + "\n");
 		}
-		if(e.getSource() == btnAppend) {
+		if (e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();
 			int result = filechooser.showOpenDialog(null);
-			if(result == JFileChooser.APPROVE_OPTION) {
+			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = filechooser.getSelectedFile();
 				try {
 					sendingImage = new ImageIcon(ImageIO.read(file));
@@ -111,23 +109,24 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 			}
 		}
 	}
-	
+
 	public boolean isReceiver() {
 		return isReceiver;
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if(arg1 instanceof UserMessage) {
-			UserMessage um = (UserMessage)arg1;
+		isReceiver = false;
+		if (arg1 instanceof UserMessage) {
+			UserMessage um = (UserMessage) arg1;
 			System.out.println(um.toString());
-			if(um.getUser().equals(receivers.getUser(0))){
-				taMessage.append(um.getUser().getName() + ": \n" +um.getContent()+"\n");
-				isReceiver = true;
-			}else {
-				isReceiver  = false;
+			for (int i = 0; i < receivers.size(); i++) {
+				if (um.getUser().getName().equals(lblReceiver.getText())) {
+					taMessage.append(um.getUser().getName() + ": \n" + um.getContent() + "\n");
+					isReceiver = true;
+				}
 			}
 		}
-		
+
 	}
 }
