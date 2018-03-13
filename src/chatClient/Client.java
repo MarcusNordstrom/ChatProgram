@@ -63,7 +63,7 @@ public class Client extends Observable {
 	 * @param message
 	 */
 	public void send(UserMessage message) {
-		System.out.println("Sending user message");
+		System.out.println("Sending " + message.getContent() + " to" + message.getUser().getName());
 		try {
 			oos.writeObject(message);
 			oos.flush();
@@ -159,7 +159,7 @@ public class Client extends Observable {
 					System.out.println("mottagit");
 					if (response instanceof UserMessage) {
 						UserMessage um = (UserMessage) response;
-						System.out.println("RECIEVED USERMESSAGE FROM SERVER from: " + um.getUser());
+						System.out.println("RECIEVED USERMESSAGE FROM SERVER from: " + um.getUser().getName());
 						setChanged();
 						notifyObservers(um);
 
@@ -190,6 +190,12 @@ public class Client extends Observable {
 	}
 
 	public void resend(UserMessage um) {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setChanged();
 		notifyObservers(ul);
 		

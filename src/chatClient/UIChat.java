@@ -90,10 +90,14 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnSend) {
+			System.out.println("Sending message...1");
 			String message = taWrite.getText().trim();
+			System.out.println("2 " + message);
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			
 			taWrite.setText("");
 			taMessage.append("You: \n" + message + "\n");
+			
 		}
 		if (e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();
@@ -127,6 +131,5 @@ public class UIChat extends JPanel implements ActionListener, Observer {
 				}
 			}
 		}
-
 	}
 }
