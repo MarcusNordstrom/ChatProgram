@@ -37,7 +37,10 @@ public class OfflineWriter extends Thread{
 		ArrayList<UserMessage> messageList;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-			Object obj = ois.readObject();
+			Object obj = null;
+			if(ois.available() > 0) {
+				obj = ois.readObject();
+			}
 			if(obj instanceof HashMap) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
@@ -63,7 +66,10 @@ public class OfflineWriter extends Thread{
 		ArrayList<UserMessage> messageList = null;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-			Object obj = ois.readObject();
+			Object obj = null;
+			if(ois.available() > 0) {
+				obj = ois.readObject();
+			}
 			if(obj instanceof HashMap) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
