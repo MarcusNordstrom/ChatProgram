@@ -27,8 +27,8 @@ import resources.UserMessage;
 
 /**
  * This is the interface for users to see other online users and saved contacts.
- * From here it´s possible to open a new message (UIChat), save online users
- * and quit the program.
+ * From here it´s possible to open a new message (UIChat), save online users and
+ * quit the program.
  * 
  * @author Anna
  *
@@ -203,15 +203,16 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				}
 			}
 			if (i == 0) {
+				JFrame chatFrame = new JFrame();
 				UserList ul = new UserList();
 				ul.addUser(um.getUser());
 				UIChat chat = new UIChat(client, um.getUser().getName(), ul);
-				frame = new JFrame();
-				frame.setPreferredSize(new Dimension(600, 400));
-				frame.add(chat);
-				frame.pack();
-				frame.setLocationRelativeTo(null);
-				frame.setVisible(true);
+				chatFrame = new JFrame();
+				chatFrame.setPreferredSize(new Dimension(600, 400));
+				chatFrame.add(chat);
+				chatFrame.pack();
+				chatFrame.setLocationRelativeTo(null);
+				chatFrame.setVisible(true);
 				chat.appendTextArea(um);
 				chattList.add(chat);
 			}

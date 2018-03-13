@@ -1,5 +1,6 @@
 package chatClient;
 
+import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Choice;
 import java.awt.Color;
@@ -8,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
@@ -20,6 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -57,6 +61,14 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		btnSend.addActionListener(this);
 		btnAppend.addActionListener(this);
 		taWrite.addKeyListener(this);
+		boolean scrollDown = textAreaBottomIsVisible();
+		if(scrollDown) {
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					scrollToBottom();
+				}
+			});
+		}
 	}
 
 	private JPanel panelTop() {
@@ -116,11 +128,18 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			}
 		}
 	}
-
-	public boolean isReceiver() {
-		return isReceiver;
+	public void scrollToBottom() {
+		JScrollBar bar = scroll.getVerticalScrollBar();
+		bar.setValue(bar.getMaximum());
 	}
-	
+	private boolean textAreaBottomIsVisible() {
+		Adjustable sb = scroll.getVerticalScrollBar();
+		int val = sb.getValue();
+		int lowest = val + sb.getVisibleAmount();
+		int maxVal = sb.getMaximum();
+		boolean atBottom = maxVal == lowest;
+		return atBottom;
+	}
 	public void appendTextArea(UserMessage message) {
 		taMessage.append(message.getUser().getName() + ":  " + message.getContent() + "\n");
 	}
@@ -139,7 +158,9 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			}
 		}
 	}
-
+	public boolean isReceiver() {
+		return isReceiver;
+	}
 	public void keyTyped(KeyEvent e) {
 	}
 	public void keyPressed(KeyEvent e) {

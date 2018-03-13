@@ -14,6 +14,7 @@ import resources.UserMessage;
 
 public class OfflineWriter extends Thread{
 	private String filename;
+	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
 
 	public OfflineWriter(String filename) {
 		this.filename = filename;

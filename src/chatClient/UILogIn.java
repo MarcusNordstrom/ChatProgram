@@ -41,7 +41,7 @@ public class UILogIn extends JPanel implements ActionListener {
 	private Client client;
 	private UserList ul = new UserList();
 	JFrame frame;
-	private ImageIcon imageIcon;
+	private ImageIcon imageIcon = null;
 
 
 	public UILogIn(Client client, JFrame frame) {

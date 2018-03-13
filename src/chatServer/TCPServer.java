@@ -7,9 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 
+import resources.Buffer;
 import resources.SystemMessage;
 import resources.User;
 import resources.UserList;
@@ -55,7 +57,7 @@ public class TCPServer {
 		private ObjectInputStream objectInputStream;
 		private ObjectOutputStream objectOutputStream;
 		private Socket socket;
-		private boolean connected = true;
+		private Buffer<UserMessage> offlineMessages = new Buffer<UserMessage>();
 
 		/*
 		 * Creates ObjectStreams of input/output. writes onlieList to client.
@@ -76,13 +78,17 @@ public class TCPServer {
 		public synchronized void run() {
 			try {
 				while (true) {
-
 					/*
 					 * checks if socket is connected and if socket is not closed. if true following
 					 * code is executed.
 					 * 
 					 */
-					if (connected) {
+					if (!socket.isClosed()) {
+						if (offlineMessages.size() > 0) {
+							for(int i = 0; i < offlineMessages.size(); i++) {
+								sendUserMessage(offlineMessages.get());
+							}
+						}
 						Object obj = objectInputStream.readObject();
 						/*
 						 * If object read is an instance of user: -The object is set to the type user.
@@ -98,12 +104,12 @@ public class TCPServer {
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
 							broadcastUserList();
-							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
-							if (offlineMessageList != null) {
-								for (UserMessage message : offlineMessageList) {
-									sendUserMessage(message);
-								}
-							}
+//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
+//							if (offlineMessageList != null) {
+//								for (UserMessage message : offlineMessageList) {
+//									sendUserMessage(message);
+//								}
+//							}
 							/*
 							 * If object read is an instance of UserMessage: -The object is set to the type
 							 * UserMessage.
@@ -116,8 +122,8 @@ public class TCPServer {
 								if (onlineMap.containsKey(client)) {
 									onlineMap.get(client).sendUserMessage(msg);
 									System.out.println("Send message to: " + client.getName());
-								}else
-									ow.writeMessageToFile(msg, client);
+								}
+//									ow.writeMessageToFile(msg, client);
 							}
 
 							/*
@@ -128,11 +134,9 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("Sys message receve");
-							System.out.flush();
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
-								System.out.flush();
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println("Client Disconnecting");
 									System.out.flush();
@@ -140,12 +144,17 @@ public class TCPServer {
 									onlineList.removeUser(user);
 									onlineMap.remove(user, this);
 									clientList.remove(this);
-									connected = false;
 									broadcastUserList();
 								}
 							}
 						} else
 							System.out.println("Not a readable Object");
+					} else if (socket.isClosed()) {
+						Object obj = objectInputStream.readObject();
+						if (obj instanceof UserMessage) {
+							UserMessage storeMessage = (UserMessage) obj;
+							offlineMessages.put(storeMessage);
+						}
 					}
 				}
 

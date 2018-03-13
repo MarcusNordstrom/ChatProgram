@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 public class User implements Serializable {
 	private static final long serialVersionUID = 7626251507713469846L;
 	private String name;
-	private ImageIcon pic;
+	private ImageIcon pic = null;
 
 	public User(String name, ImageIcon pic) {
 		this.name = name;
@@ -35,7 +35,7 @@ public class User implements Serializable {
 	public boolean equals(Object obj) {
 		if(obj instanceof User) {
 			User user = (User)obj;
-			if(this.hashCode() == user.hashCode())
+			if(name.hashCode() == user.hashCode())
 				return true;
 		}
 		return false;
