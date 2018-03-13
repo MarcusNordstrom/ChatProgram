@@ -23,6 +23,13 @@ import javax.swing.event.ListSelectionListener;
 import resources.User;
 import resources.UserList;
 
+/**
+ * This is the interface for users to see other online users and saved contacts. 
+ * From here it´s possible to open a new message (UIChat), save online users
+ * and quit the program. 
+ * @author Anna
+ *
+ */
 public class UIUsers extends JPanel implements ActionListener, ListSelectionListener,Observer {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
@@ -46,13 +53,11 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	
 	private JFrame frame;
 	
-	
-
 	private Client client;
 	private UserList userListOnline;
 	private UserList userListSaved;
 
-	
+
 	public UIUsers(Client client, JFrame frame) {
 		this.client = client;
 		this.frame = frame;
@@ -82,6 +87,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		panelOnline = new JPanel(new BorderLayout());
 		userListOnline = client.getList();
 		onlinetp.setText("");
+		onlinetp.setEditable(false);
 		for(int i=0; i<userListOnline.size(); i++) {
 			onlinetp.setText(onlinetp.getText() + userListOnline.getUser(i).getName() + "\n");
 		}
@@ -168,7 +174,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	public void valueChanged(ListSelectionEvent e) {}
 
-	@Override
+	
 	public void update(Observable o, Object arg) {
 		if(arg instanceof UserList) {
 			System.out.println("Receive userlist from client");
