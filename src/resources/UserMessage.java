@@ -58,7 +58,8 @@ public class UserMessage implements Serializable{
 		return image;
 	}
 	public String toString() {
-		return null;
-	}
-	
+        return "From User: " + this.user.getName() + "\n"
+                + "To Users: " + this.receivers.toString() + "\n"
+                + "Contains: \n" + this.content;
+    }
 }

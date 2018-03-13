@@ -140,6 +140,8 @@ public class TCPServer {
 									socket.close();
 									onlineList.removeUser(user);
 									onlineMap.remove(user, this);
+									clientList.remove(this);
+									broadcastUserList();
 									connected = false;
 								}
 							}
