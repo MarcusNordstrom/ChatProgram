@@ -1,6 +1,8 @@
 package chatServer;
 
 import java.awt.Dimension;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
 
@@ -16,5 +18,6 @@ public class MainServer {
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
 	}
 }
