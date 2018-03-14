@@ -167,6 +167,9 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 				if (sendingImage != null) {
 					taMessage.insertIcon(new ImageIcon(sendingImage.getImage().getScaledInstance(taMessage.getWidth(),
 							taMessage.getHeight(), Image.SCALE_DEFAULT)));
+					taMessage.getStyledDocument().insertString(offset, "\n", null);
+					offset += resMess.length();
+					taMessage.moveCaretPosition(++offset);
 
 				}
 			} catch (BadLocationException e1) {
@@ -216,6 +219,8 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 				taMessage.select(offset, (offset + 1));
 				taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(),taMessage.getHeight(), Image.SCALE_DEFAULT)));
 						
+				taMessage.getStyledDocument().insertString(offset, "\n", null);
+				offset += resMess.length();
 				taMessage.moveCaretPosition(++offset);
 			}
 		} catch (BadLocationException e1) {
@@ -245,6 +250,8 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 						if (um.getImage() != null) {
 							taMessage.select(offset, (offset + 1));
 							taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(), taMessage.getHeight(), Image.SCALE_DEFAULT)));
+							taMessage.getStyledDocument().insertString(offset, "\n", null);
+							offset += resMess.length();
 							taMessage.moveCaretPosition(++offset);
 							
 						}
@@ -284,6 +291,8 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 				if (sendingImage != null) {
 					taMessage.insertIcon(new ImageIcon(sendingImage.getImage().getScaledInstance(taMessage.getWidth(),
 							taMessage.getHeight(), Image.SCALE_DEFAULT)));
+					taMessage.getStyledDocument().insertString(offset, "\n", null);
+					offset += resMess.length();
 					taMessage.moveCaretPosition(++offset);
 
 				}
