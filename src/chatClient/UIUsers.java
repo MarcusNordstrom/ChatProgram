@@ -32,38 +32,33 @@ import resources.UserMessage;
  * From here it´s possible to open a new message (UIChat), save online users and
  * quit the program.
  * 
- * @author Anna
- *
  */
 public class UIUsers extends JPanel implements ActionListener, ListSelectionListener, Observer {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
 	private JButton btnDisconnect = new JButton("Exit");
-
 	private JLabel lblUsersOnline = new JLabel("Users online");
 	private JLabel lblSavedUsers = new JLabel("Saved users");
-
 	private JTextPane writetp = new JTextPane();
-
 	private JTextPane onlinetp = new JTextPane();
 	private JTextPane offlinetp = new JTextPane();
-
-	// private JList<String> list;
-
 	private String[] online = new String[20];
 	private String[] savedUsers = new String[20];
-
 	private JPanel panelOnline = new JPanel();
 	private JPanel panelSavedUsers = new JPanel();
-
 	private JFrame frame;
 
 	private Client client;
 	private UserList userListOnline;
 	private UserList userListSaved;
-
 	private ArrayList<UIChat> chattList = new ArrayList<UIChat>();
 
+	
+	/**
+	 * Constructor 
+	 * @param client
+	 * @param frame
+	 */
 	public UIUsers(Client client, JFrame frame) {
 		this.client = client;
 		this.frame = frame;
@@ -78,6 +73,11 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		client.addObserver(this);
 	}
 
+	/**
+	 * Creating a panel with 3 buttons and a text field.
+	 * @return panel
+	 * 			a panel with GridLayout and 4 components.
+	 */		
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new GridLayout(2, 3));
 		panel.add(btnWrite);
@@ -86,7 +86,12 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		panel.add(writetp);
 		return panel;
 	}
-
+	
+	/**
+	 * Creating a panel that shows other online users.
+	 * @return panel
+	 * 			a panel with BorderLayout and 2 components.
+	 */
 	private JPanel panelOnline() {
 		panelOnline = new JPanel(new BorderLayout());
 		userListOnline = client.getList();
@@ -99,7 +104,12 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		panelOnline.add(onlinetp, BorderLayout.CENTER);
 		return panelOnline;
 	}
-
+	
+	/**
+	 * Creating a panel that shows saved users. 
+	 * @return panel	
+	 * 			a panel with BorderLayout and 2 components.
+	 */
 	private JPanel panelSavedUsers() {
 		panelSavedUsers = new JPanel(new BorderLayout());
 		panelSavedUsers.add(lblSavedUsers, BorderLayout.NORTH);
@@ -108,13 +118,25 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		return panelSavedUsers;
 	}
 
+	/**
+	 * Adding 2 panels that should be shown in the window.
+	 * @return panel
+	 * 			a panel with GridLayout and 2 components.
+	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new GridLayout(2, 0));
 		panel.add(panelOnline());
 		panel.add(panelSavedUsers());
 		return panel;
 	}
-
+	
+	/**
+	 * Creating functions for the buttons.
+	 * Opens the window UIChat when button "write" is pressed. 
+	 * Adding the receiver based on what was written in the text field.
+	 * Disconnect if button "exit" is pressed.
+	 * Adding user to contacts if button "add to contacts" is pressed.
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnWrite) {
 			String receivers = writetp.getText();
@@ -153,8 +175,10 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		chattList.add(chat);
 	}
 	
-	
-
+	/**
+	 * Observes if new users are online and updates the list 
+	 * with online users.
+	 */
 	public void update(Observable o, Object arg) {
 		if (arg instanceof UserList) {
 			System.out.println("Receive userlist from client");
@@ -193,10 +217,10 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 			if(chattList.get(i).getResName().equals(res)) {
 				System.out.println("removing chat with: " + chattList.get(i).getResName() + " equal to " + res);
 				chattList.remove(i);
-				
+
 			}
 		}
-		
+
 	}
 
 	@Override

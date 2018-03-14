@@ -36,6 +36,11 @@ import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
+ */
+ *
+ * The interface for users to send and receive messages. 
+ * @author Anna
+/**
 public class UIChat extends JPanel implements ActionListener, KeyListener, Observer {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
@@ -55,6 +60,13 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	private int offset;
 	private JFrame frame;
 
+	/**
+	 * Constructor
+	 * @param client
+	 * @param receiver
+	 * @param retList
+	 * @param ui
+	 */
 	public UIChat(Client client, String receiver, UserList retList, UIUsers ui, JFrame frame) {
 		this.client = client;
 		this.frame = frame;
@@ -85,6 +97,11 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		}
 	}
 
+	/**
+	 * Creating a panel with a label to show the receiver of the message.
+	 * @return panel
+	 * 			a panel with BorderLayout and 1 component.
+	 */
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(1, 30));
@@ -92,7 +109,13 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		panel.add(btnClose, BorderLayout.EAST);
 		return panel;
 	}
-
+	
+	
+	/**
+	 * Creating a panel where the sent and received messages are showed.
+	 * @return panel
+	 * 			a panel with BorderLayout and 1 component.
+	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new BorderLayout());
 		scroll = new JScrollPane(taMessage);
@@ -102,7 +125,14 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		panel.add(scroll, BorderLayout.CENTER);
 		return panel;
 	}
-
+	
+	
+	/**
+	 * Creating a panel where users can write their messages, a button
+	 * to send a image and a button to send it. 
+	 * @return panel
+	 * 			a panel with BorderLayout and 3 components.
+	 */
 	private JPanel panelBottom() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(1, 80));
@@ -116,6 +146,12 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		return panel;
 	}
 
+	
+	/**
+	 * Creating functions for the buttons. 
+	 * Sends written messages and open file chooser
+	 * to append images. 
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnSend) {
 			System.out.println("Sending message...1");
@@ -124,18 +160,18 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 
 			taWrite.setText("");
-
-			try {
-				String resMess = ("you" + ":  " + message + "\n");
-				taMessage.getStyledDocument().insertString(offset, resMess, null);
-				offset += resMess.length();
-				if (sendingImage != null) {
-					taMessage.insertIcon(sendingImage);
+			
+				try {
+					String resMess = ("you" + ":  " + message + "\n");
+					taMessage.getStyledDocument().insertString(offset, resMess, null);
+					offset += resMess.length();
+					if(sendingImage != null) {
+						taMessage.insertIcon(sendingImage);
+					}
+				} catch (BadLocationException e1) {
+					e1.printStackTrace();
 				}
-			} catch (BadLocationException e1) {
-				e1.printStackTrace();
-			}
-			// taMessage.append("You: " + message + "\n");
+				//			taMessage.append("You:  " + message + "\n");
 			sendingImage = null;
 		}
 		if (e.getSource() == btnAppend) {
@@ -156,7 +192,6 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			frame.dispose();
 		}
 	}
-
 
 	public void scrollToBottom() {
 		JScrollBar bar = scroll.getVerticalScrollBar();
@@ -181,11 +216,12 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 				taMessage.insertIcon(sendingImage);
 			}
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Observes when new messages has been written.
+	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		isReceiver = false;
@@ -211,7 +247,6 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 
 	public void keyTyped(KeyEvent e) {
 	}
-
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			System.out.println("Sending message...1");
@@ -221,7 +256,6 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			taWrite.setText("");
 		}
 	}
-
 	public void keyReleased(KeyEvent e) {
 	}
 
