@@ -32,7 +32,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import resources.User;
 import resources.UserList;
 
+/**
+ * The interface for creating a user and logging in. 
+ * @author Anna
+ *
+ */
 public class UILogIn extends JPanel implements ActionListener {
+	JFrame frame;
 	private JLabel lblHeadline = new JLabel("Welcome to log in");
 	private JLabel lblUsername = new JLabel("Username: ");
 	private JTextField tfUsername = new JTextField();
@@ -40,10 +46,13 @@ public class UILogIn extends JPanel implements ActionListener {
 	private JButton btnUserImage = new JButton("Choose user image");
 	private Client client;
 	private UserList ul = new UserList();
-	JFrame frame;
 	private ImageIcon imageIcon = null;
 
-
+	/**
+	 * Constructor 
+	 * @param client
+	 * @param frame
+	 */
 	public UILogIn(Client client, JFrame frame) {
 		this.client = client;
 		this.frame = frame;
@@ -53,6 +62,12 @@ public class UILogIn extends JPanel implements ActionListener {
 		btnUserImage.addActionListener(this);
 	}
 
+
+	/**
+	 * Adding a panel an 2 buttons to the window.
+	 * @return panel 
+	 * 			a panel with GridLayout and 3 components. 
+	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new GridLayout(3,0));
 		panel.add(panelTop());
@@ -61,6 +76,13 @@ public class UILogIn extends JPanel implements ActionListener {
 		return panel;
 	}
 
+
+	/**
+	 * Creating a panel with the headline and adding a panel 
+	 * with a text field. 
+	 * @return panel 
+	 * 			a panel with GridLayout and 2 components. 
+	 */
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new GridLayout(2,0));
 		lblHeadline.setFont(new Font("Comic sans", Font.BOLD, 14));
@@ -70,6 +92,13 @@ public class UILogIn extends JPanel implements ActionListener {
 		return panel;
 	}
 
+	
+	/**
+	 * Creating a panel with a label and a text field
+	 * where users can enter their username. 
+	 * @return panel 	
+	 *			a panel with BorderLayout and 2 components. 
+	 */
 	private JPanel panelUsername() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(lblUsername, BorderLayout.WEST);
@@ -77,11 +106,15 @@ public class UILogIn extends JPanel implements ActionListener {
 		return panel;
 	}
 
+	
+	/**
+	 * Creating functions for the buttons. 
+	 * The method compares new usernames with already existing usernames.
+	 * If they are the same, users need to enter another username to log in.
+	 * It also makes it possible to choose an image from users computer. 
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnLogIn && !(tfUsername.getText().trim().equals(""))) {
-			//if-sats
-			// om anv�ndarnamet finns = connecta & ta upp UIUsers
-			// om anv�ndarnamet inte finns = ta bort text i tfUsername.
 			ul = client.getList();
 			int sameUsers = 0;
 
