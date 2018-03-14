@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -129,16 +131,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 					}
 				}
 			}
-			UIChat chat = new UIChat(client, receivers, retList, this);
-			frame = new JFrame();
-			frame.setPreferredSize(new Dimension(600, 400));
-			frame.add(chat);
-			frame.pack();
-			frame.setLocationRelativeTo(null);
-			frame.setVisible(true);
-			chattList.add(chat);
-			// }
-
+			newChat(receivers, retList);
 		}
 		if (e.getSource() == btnContacts) {
 
@@ -149,8 +142,18 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	}
 
-	public void valueChanged(ListSelectionEvent e) {
+	public void newChat(String receivers, UserList retList) {
+		frame = new JFrame();
+		UIChat chat = new UIChat(client, receivers, retList, this, frame);
+		frame.setPreferredSize(new Dimension(600, 400));
+		frame.add(chat);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		chattList.add(chat);
 	}
+	
+	
 
 	public void update(Observable o, Object arg) {
 		if (arg instanceof UserList) {
@@ -178,15 +181,8 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				JFrame chatFrame = new JFrame();
 				UserList ul = new UserList();
 				ul.addUser(um.getUser());
-				UIChat chat = new UIChat(client, um.getUser().getName(), ul, this);
-				chatFrame = new JFrame();
-				chatFrame.setPreferredSize(new Dimension(600, 400));
-				chatFrame.add(chat);
-				chatFrame.pack();
-				chatFrame.setLocationRelativeTo(null);
-				chatFrame.setVisible(true);
-				chat.appendTextArea(um);
-				chattList.add(chat);
+				newChat(um.getUser().getName(), ul);
+				client.resend(um);
 			}
 		}
 
@@ -200,6 +196,12 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				
 			}
 		}
+		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }

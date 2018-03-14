@@ -30,17 +30,11 @@ public class Main {
 			//Sebbe 77.53.42.147
 			//benji 83.248.13.179
 			//Jake 83.254.153.173
-			client = new Client("192.168.1.52",12345);
+			client = new Client("192.168.1.56",12345);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		JFrame frame = new JFrame("Chat");
-//		frame.setPreferredSize(new Dimension(600,400));
-//		frame.add(new UIChat(client));
-//		frame.pack();
-//		frame.setLocationRelativeTo(null);
-//		frame.setVisible(true);
-		
 		frame = new JFrame("Log in");
 		frame.setResizable(false);
 		frame.setPreferredSize(new Dimension(450,250));

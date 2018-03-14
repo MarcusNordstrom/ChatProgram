@@ -197,7 +197,7 @@ public class Client extends Observable {
 			e.printStackTrace();
 		}
 		setChanged();
-		notifyObservers(ul);
+		notifyObservers(um);
 		
 	}
 
