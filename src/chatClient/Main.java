@@ -46,6 +46,7 @@ public class Main {
 		frame = new JFrame("Chat");
 		frame.setUndecorated(true);
 		frame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+		
 		frame.setPreferredSize(new Dimension(400,600));
 		frame.add(new UIUsers(client, frame));
 		frame.pack();

@@ -167,6 +167,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	public void newChat(String receivers, UserList retList) {
 		frame = new JFrame();
 		UIChat chat = new UIChat(client, receivers, retList, this, frame);
+		frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(600, 400));
 		frame.add(chat);
 		frame.pack();
