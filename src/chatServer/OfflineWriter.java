@@ -11,15 +11,24 @@ import java.util.HashMap;
 
 import resources.User;
 import resources.UserMessage;
-
+/**
+ * This class writes messages to files if the user is not online
+ * 
+ *
+ */
 public class OfflineWriter extends Thread{
 	private String filename;
 	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
-
+	/**
+	 * Constructor
+	 * @param filename String that indicates which file to use
+	 */
 	public OfflineWriter(String filename) {
 		this.filename = filename;
 	}
-
+	/**
+	 * Method to initialize the hashmap object in the file.
+	 */
 	public void initfilesystem() {
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
@@ -32,7 +41,11 @@ public class OfflineWriter extends Thread{
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Writes a UserMessage to file
+	 * @param msg UserMessage that you want to save
+	 * @param user User that you want to save the message to
+	 */
 	public void writeMessageToFile(UserMessage msg, User user) {
 		ArrayList<UserMessage> messageList;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
@@ -61,7 +74,11 @@ public class OfflineWriter extends Thread{
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * 
+	 * @param user The user that you want all the messages for
+	 * @return ArrayList The arraylist that contains all messages sent to the user while offline
+	 */
 	public ArrayList<UserMessage> getMessages(User user) {
 		ArrayList<UserMessage> messageList = null;
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
