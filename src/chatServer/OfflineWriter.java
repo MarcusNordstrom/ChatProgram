@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,7 +14,7 @@ import resources.UserList;
 import resources.UserMessage;
 /**
  * This class writes messages to files if the user is not online
- * 
+ * @author Marcus Nordström
  *
  */
 public class OfflineWriter extends Thread{
@@ -89,9 +88,9 @@ public class OfflineWriter extends Thread{
 				if(hm.containsKey(user)) {
 					messageList = hm.get(user);
 					hm.remove(user);
+					oos.writeObject(hm);
+					oos.flush();
 				}
-				oos.writeObject(hm);
-				oos.flush();
 			}	
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
