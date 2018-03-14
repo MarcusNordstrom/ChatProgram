@@ -36,11 +36,11 @@ import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
- */
+ /**
  *
  * The interface for users to send and receive messages. 
  * @author Anna
-/**
+*/
 public class UIChat extends JPanel implements ActionListener, KeyListener, Observer {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
