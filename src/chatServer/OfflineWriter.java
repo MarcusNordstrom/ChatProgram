@@ -6,10 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import resources.User;
+import resources.UserList;
 import resources.UserMessage;
 /**
  * This class writes messages to files if the user is not online
@@ -17,7 +19,7 @@ import resources.UserMessage;
  *
  */
 public class OfflineWriter extends Thread{
-	private ObjectOutputStream oos;
+	private OfflineObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
 	/**
@@ -26,7 +28,7 @@ public class OfflineWriter extends Thread{
 	 */
 	public OfflineWriter(String filename) {
 		try {
-			oos = new ObjectOutputStream(new FileOutputStream(filename));
+			oos = new OfflineObjectOutputStream(new FileOutputStream(filename));
 			 ois = new ObjectInputStream(new FileInputStream(filename));
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -65,7 +67,7 @@ public class OfflineWriter extends Thread{
 				}
 				messageList.add(msg);
 				hm.put(user, messageList);
-				oos.writeObject(hm);
+				oos.OfflineReplaceObject(hm);
 				oos.flush();
 			}
 		} catch (FileNotFoundException e) {
@@ -94,7 +96,7 @@ public class OfflineWriter extends Thread{
 					messageList = hm.get(user);
 					hm.remove(user);
 				}
-				oos.writeObject(hm);
+				oos.OfflineReplaceObject(hm);
 				oos.flush();
 			}	
 		} catch (FileNotFoundException e) {
@@ -117,5 +119,35 @@ public class OfflineWriter extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private class OfflineObjectOutputStream extends ObjectOutputStream {
+
+		public OfflineObjectOutputStream(OutputStream out) throws IOException {
+			super(out);
+			this.enableReplaceObject(true);
+		}
+		
+		public void OfflineReplaceObject(Object obj) throws IOException {
+			this.replaceObject(obj);
+		}
+		
+	}
+	
+	public static void main(String[] args) {
+		OfflineWriter ow = new OfflineWriter("files/OfflineMap.txt");
+		//ow.initfilesystem();
+		User user = new User("Bertil", null);
+		User userA[] = {user};
+		UserList userlist = new UserList(userA);
+		UserMessage usermessage = new UserMessage(user, userlist, "Hej", null);
+		ow.writeMessageToFile(usermessage, user);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(ow.getMessages(user));
+		ow.shutDown();
 	}
 }
