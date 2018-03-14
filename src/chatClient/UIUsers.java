@@ -23,9 +23,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.apple.eawt.AppEvent.UserSessionEvent;
+
 import resources.User;
 import resources.UserList;
 import resources.UserMessage;
+import resources.SaveContacts;
 
 /**
  * This is the interface for users to see other online users and saved contacts.
@@ -51,6 +54,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	private Client client;
 	private UserList userListOnline;
 	private UserList userListSaved;
+	private SaveContacts saveContacts;
 	private ArrayList<UIChat> chattList = new ArrayList<UIChat>();
 
 	
@@ -156,7 +160,27 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 			newChat(receivers, retList);
 		}
 		if (e.getSource() == btnContacts) {
-
+			String saveContact = writetp.getText();
+			String[] saveArr = saveContact.split(",");
+			UserList List = new UserList();
+			for(String s : saveArr) {
+				for(String res : saveArr) {
+					for(int i = 0; i < userListOnline.size(); i++) {
+						if(s.equals(userListOnline.getUser(i).getName())) {
+							System.out.println(client.getSelf()+"");
+							System.out.println(userListOnline.getUser(i));
+							//saveContacts.saveToList(client.getSelf(),userListOnline.getUser(i));
+						}
+					}
+				}
+			}
+			
+			
+			
+				
+			
+			
+			
 		}
 		if (e.getSource() == btnDisconnect) {
 			client.exit();
@@ -167,6 +191,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	public void newChat(String receivers, UserList retList) {
 		frame = new JFrame();
 		UIChat chat = new UIChat(client, receivers, retList, this, frame);
+		frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(600, 400));
 		frame.add(chat);
 		frame.pack();

@@ -6,9 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import resources.User;
 import resources.UserList;
@@ -21,7 +21,6 @@ import resources.UserMessage;
 public class OfflineWriter extends Thread{
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
-	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
 	/**
 	 * Constructor
 	 * @param filename String that indicates which file to use
@@ -55,7 +54,7 @@ public class OfflineWriter extends Thread{
 		ArrayList<UserMessage> messageList;
 		try{
 			Object obj = ois.readObject();
-			if(obj instanceof HashMap) {
+			if(obj instanceof Map) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
 					messageList = hm.get(user);
@@ -84,14 +83,14 @@ public class OfflineWriter extends Thread{
 		ArrayList<UserMessage> messageList = null;
 		try{
 			Object obj = ois.readObject();
-			if(obj instanceof HashMap) {
+			if(obj instanceof Map) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
 					messageList = hm.get(user);
 					hm.remove(user);
-				}
-				oos.writeObject(hm);
-				oos.flush();
+					oos.writeObject(hm);
+					oos.flush();
+				}	
 			}	
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
