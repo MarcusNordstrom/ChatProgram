@@ -26,18 +26,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 
 import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
-public class UIChat extends JPanel implements ActionListener, KeyListener, Observer {
+public class UIChat extends JPanel implements ActionListener, KeyListener, Observer, WindowListener {
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
-	private JTextArea taMessage = new JTextArea("");
+	private JTextPane taMessage = new JTextPane();
 	private JTextArea taWrite = new JTextArea();
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
@@ -45,11 +47,15 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	private ImageIcon sendingImage;
 	private UserList receivers;
 
+	private UIUsers ui;
+	
 	private Client client;
 	private boolean isReceiver = false;
+	private int offset;
 
-	public UIChat(Client client, String receiver, UserList retList) {
+	public UIChat(Client client, String receiver, UserList retList, UIUsers ui) {
 		this.client = client;
+		this.ui = ui;
 		client.addObserver(this);
 		lblReceiver.setText(receiver);
 		receivers = retList;
@@ -58,9 +64,13 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		add(panelTop(), BorderLayout.NORTH);
 		add(panelCenter(), BorderLayout.CENTER);
 		add(panelBottom(), BorderLayout.SOUTH);
+		
 		btnSend.addActionListener(this);
 		btnAppend.addActionListener(this);
 		taWrite.addKeyListener(this);
+		
+		sendingImage = null;
+		
 		boolean scrollDown = textAreaBottomIsVisible();
 		if(scrollDown) {
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -82,8 +92,6 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		JPanel panel = new JPanel(new BorderLayout());
 		scroll = new JScrollPane(taMessage);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		taMessage.setLineWrap(true);
-		taMessage.setWrapStyleWord(true);
 		taMessage.setEditable(false);
 		panel.setBackground(Color.WHITE);
 		panel.add(scroll, BorderLayout.CENTER);
@@ -111,8 +119,19 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			
 			taWrite.setText("");
-			taMessage.append("You:  " + message + "\n");
 			
+				try {
+					String resMess = ("you" + ":  " + message + "\n");
+					taMessage.getStyledDocument().insertString(offset, resMess, null);
+					offset += resMess.length();
+					if(sendingImage != null) {
+						taMessage.insertIcon(sendingImage);
+					}
+				} catch (BadLocationException e1) {
+					e1.printStackTrace();
+				}
+				//			taMessage.append("You:  " + message + "\n");
+			sendingImage = null;
 		}
 		if (e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();
@@ -141,7 +160,17 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		return atBottom;
 	}
 	public void appendTextArea(UserMessage message) {
-		taMessage.append(message.getUser().getName() + ":  " + message.getContent() + "\n");
+		try {
+			String resMess = (message.getUser().getName() + ":  " + message.getContent() + "\n");
+			taMessage.getStyledDocument().insertString(offset, resMess , null);
+			offset += resMess.length();
+			if(sendingImage != null) {
+				taMessage.insertIcon(sendingImage);
+			}
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -161,6 +190,11 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	public boolean isReceiver() {
 		return isReceiver;
 	}
+	
+	public String getResName() {
+		return lblReceiver.getText();
+	}
+	
 	public void keyTyped(KeyEvent e) {
 	}
 	public void keyPressed(KeyEvent e) {
@@ -170,9 +204,56 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			System.out.println("2 " + message);
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			taWrite.setText("");
-			taMessage.append("You:  " + message + "\n");
+//			taMessage.append("You:  " + message + "\n");
 		}
 	}
 	public void keyReleased(KeyEvent e) {
 	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		ui.closeChat(lblReceiver.getText());
+		System.out.println("closed");
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		ui.closeChat(lblReceiver.getText());
+		System.out.println("closing");
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	
 }

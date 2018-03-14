@@ -74,8 +74,6 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		btnDisconnect.addActionListener(this);
 
 		client.addObserver(this);
-
-		// list.addListSelectionListener(this);
 	}
 
 	private JPanel panelTop() {
@@ -95,22 +93,13 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		for (int i = 0; i < userListOnline.size(); i++) {
 			onlinetp.setText(onlinetp.getText() + userListOnline.getUser(i).getName() + "\n");
 		}
-		// list = new JList<String>(online);
-		// list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelOnline.add(lblUsersOnline, BorderLayout.NORTH);
 		panelOnline.add(onlinetp, BorderLayout.CENTER);
-		// panelOnline.add(list, BorderLayout.CENTER);
 		return panelOnline;
 	}
 
 	private JPanel panelSavedUsers() {
 		panelSavedUsers = new JPanel(new BorderLayout());
-		// userListSaved =
-		// for(int i=0; i<userListSaved.size(); i++) {
-		// savedUsers[i] = userListSaved.getUser(i).getName();
-		// }
-		// list = new JList<String>(savedUsers);
-		// list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		panelSavedUsers.add(lblSavedUsers, BorderLayout.NORTH);
 		panelSavedUsers.add(offlinetp, BorderLayout.CENTER);
 		// panelSavedUsers.add(list, BorderLayout.CENTER);
@@ -126,18 +115,6 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnWrite) {
-			// String receiver;
-			// List receivers = list.getSelectedValuesList();
-			// for(int i = 0; i < receivers.size(); i++) {
-			// receiver = (String)receivers.get(i);
-			// System.out.println(receiver);
-			// System.out.println(receivers.get(i));
-			// String receiver = "Test";
-			// int[] selectedIndex = list.getSelectedIndices();
-			// System.out.println(selectedIndex.length+"" + selectedIndex);
-			// for( int i = 0; i < selectedIndex.length; i++) {
-			// System.out.println(client.getList().getUser(list.getSelectedIndices()[i]).getName());
-
 			String receivers = writetp.getText();
 			String[] receivArr = receivers.split(",");
 			UserList retList = new UserList();
@@ -152,7 +129,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 					}
 				}
 			}
-			UIChat chat = new UIChat(client, receivers, retList);
+			UIChat chat = new UIChat(client, receivers, retList, this);
 			frame = new JFrame();
 			frame.setPreferredSize(new Dimension(600, 400));
 			frame.add(chat);
@@ -184,11 +161,6 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 			for (int i = 0; i < userListOnline.size(); i++) {
 				onlinetp.setText(onlinetp.getText() + userListOnline.getUser(i).getName() + "\n");
 			}
-			//
-			// list = new JList<String>(online);
-			// list.setSelectionMode(JList.VERTICAL);
-			// list.setSelectedIndex(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			//
 		} else if (arg instanceof UserMessage) {
 			UserMessage um = (UserMessage) arg;
 			try {
@@ -206,7 +178,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				JFrame chatFrame = new JFrame();
 				UserList ul = new UserList();
 				ul.addUser(um.getUser());
-				UIChat chat = new UIChat(client, um.getUser().getName(), ul);
+				UIChat chat = new UIChat(client, um.getUser().getName(), ul, this);
 				chatFrame = new JFrame();
 				chatFrame.setPreferredSize(new Dimension(600, 400));
 				chatFrame.add(chat);
@@ -218,5 +190,16 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 			}
 		}
 
+	}
+
+	public void closeChat(String res) {
+		for(int i = 0; i < chattList.size(); i++) {
+			if(chattList.get(i).getResName().equals(res)) {
+				System.out.println("removing chat with: " + chattList.get(i).getResName() + " equal to " + res);
+				chattList.remove(i);
+				
+			}
+		}
+		
 	}
 }
