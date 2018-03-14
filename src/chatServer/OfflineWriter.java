@@ -19,7 +19,7 @@ import resources.UserMessage;
  *
  */
 public class OfflineWriter extends Thread{
-	private OfflineObjectOutputStream oos;
+	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
 	/**
@@ -28,7 +28,7 @@ public class OfflineWriter extends Thread{
 	 */
 	public OfflineWriter(String filename) {
 		try {
-			oos = new OfflineObjectOutputStream(new FileOutputStream(filename));
+			oos = new ObjectOutputStream(new FileOutputStream(filename));
 			 ois = new ObjectInputStream(new FileInputStream(filename));
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -113,19 +113,6 @@ public class OfflineWriter extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private class OfflineObjectOutputStream extends ObjectOutputStream {
-
-		public OfflineObjectOutputStream(OutputStream out) throws IOException {
-			super(out);
-			this.enableReplaceObject(true);
-		}
-		
-		public void OfflineReplaceObject(Object obj) throws IOException {
-			this.replaceObject(obj);
-		}
-		
 	}
 	
 	public static void main(String[] args) {
