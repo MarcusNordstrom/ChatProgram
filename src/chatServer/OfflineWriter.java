@@ -54,10 +54,7 @@ public class OfflineWriter extends Thread{
 	public void writeMessageToFile(UserMessage msg, User user) {
 		ArrayList<UserMessage> messageList;
 		try{
-			Object obj = null;
-			if(ois.available() > 0) {
-				obj = ois.readObject();
-			}
+			Object obj = ois.readObject();
 			if(obj instanceof HashMap) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
@@ -67,7 +64,7 @@ public class OfflineWriter extends Thread{
 				}
 				messageList.add(msg);
 				hm.put(user, messageList);
-				oos.OfflineReplaceObject(hm);
+				oos.writeObject(hm);
 				oos.flush();
 			}
 		} catch (FileNotFoundException e) {
@@ -86,17 +83,14 @@ public class OfflineWriter extends Thread{
 	public ArrayList<UserMessage> getMessages(User user) {
 		ArrayList<UserMessage> messageList = null;
 		try{
-			Object obj = null;
-			if(ois.available() > 0) {
-				obj = ois.readObject();
-			}
+			Object obj = ois.readObject();
 			if(obj instanceof HashMap) {
 				HashMap<User, ArrayList<UserMessage>> hm = (HashMap<User, ArrayList<UserMessage>>)obj;
 				if(hm.containsKey(user)) {
 					messageList = hm.get(user);
 					hm.remove(user);
 				}
-				oos.OfflineReplaceObject(hm);
+				oos.writeObject(hm);
 				oos.flush();
 			}	
 		} catch (FileNotFoundException e) {
@@ -136,7 +130,7 @@ public class OfflineWriter extends Thread{
 	
 	public static void main(String[] args) {
 		OfflineWriter ow = new OfflineWriter("files/OfflineMap.txt");
-		//ow.initfilesystem();
+		ow.initfilesystem();
 		User user = new User("Bertil", null);
 		User userA[] = {user};
 		UserList userlist = new UserList(userA);
