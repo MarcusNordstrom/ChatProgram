@@ -207,19 +207,21 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		return atBottom;
 	}
 
-	public void appendTextArea(UserMessage message) {
+	public void appendTextArea(UserMessage um) {
 		try {
-			String resMess = (message.getUser().getName() + ":  " + message.getContent() + "\n");
+			String resMess = (um.getUser().getName() + ":     " + um.getContent() + "\n");
 			taMessage.getStyledDocument().insertString(offset, resMess, null);
 			offset += resMess.length();
-			if (sendingImage != null) {
-				taMessage.getStyledDocument().insertString(offset, "\n", null);
-				offset++;
-				taMessage.insertIcon(sendingImage);
+			if (um.getImage() != null) {
+				taMessage.select(offset, (offset + 1));
+				taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(),taMessage.getHeight(), Image.SCALE_DEFAULT)));
+						
+				taMessage.moveCaretPosition(++offset);
 			}
-		} catch (BadLocationException e) {
-			e.printStackTrace();
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
 		}
+		sendingImage = null;
 	}
 
 	/**
@@ -241,9 +243,10 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 						taMessage.getStyledDocument().insertString(offset, resMess, null);
 						offset += resMess.length();
 						if (um.getImage() != null) {
-							taMessage.select(offset, (offset+1));
-							taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(
-									taMessage.getWidth(), taMessage.getHeight(), Image.SCALE_DEFAULT)));
+							taMessage.select(offset, (offset + 1));
+							taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(), taMessage.getHeight(), Image.SCALE_DEFAULT)));
+							taMessage.moveCaretPosition(++offset);
+							
 						}
 					} catch (BadLocationException e1) {
 						e1.printStackTrace();
@@ -271,7 +274,23 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+
 			taWrite.setText("");
+
+			try {
+				String resMess = ("you" + ":  " + message + "\n");
+				taMessage.getStyledDocument().insertString(offset, resMess, null);
+				offset += resMess.length();
+				if (sendingImage != null) {
+					taMessage.insertIcon(new ImageIcon(sendingImage.getImage().getScaledInstance(taMessage.getWidth(),
+							taMessage.getHeight(), Image.SCALE_DEFAULT)));
+					taMessage.moveCaretPosition(++offset);
+
+				}
+			} catch (BadLocationException e1) {
+				e1.printStackTrace();
+			}
+			sendingImage = null;
 		}
 	}
 
