@@ -17,29 +17,32 @@ import resources.UserMessage;
  *
  */
 public class OfflineWriter extends Thread{
-	private String filename;
+	private ObjectOutputStream oos;
+	private ObjectInputStream ois;
 	private ArrayList<UserMessage> list = new ArrayList<UserMessage>();
 	/**
 	 * Constructor
 	 * @param filename String that indicates which file to use
 	 */
 	public OfflineWriter(String filename) {
-		this.filename = filename;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(filename));
+			 ois = new ObjectInputStream(new FileInputStream(filename));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * Method to initialize the hashmap object in the file.
 	 */
 	public void initfilesystem() {
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-			HashMap<User, ArrayList<UserMessage>> hm = new HashMap<User, ArrayList<UserMessage>>();
-			oos.writeObject(hm);
-			oos.flush();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			try {
+				HashMap<User, ArrayList<UserMessage>> hm = new HashMap<User, ArrayList<UserMessage>>();
+				oos.writeObject(hm);
+				oos.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 	/**
 	 * Writes a UserMessage to file
@@ -48,8 +51,7 @@ public class OfflineWriter extends Thread{
 	 */
 	public void writeMessageToFile(UserMessage msg, User user) {
 		ArrayList<UserMessage> messageList;
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+		try{
 			Object obj = null;
 			if(ois.available() > 0) {
 				obj = ois.readObject();
@@ -81,8 +83,7 @@ public class OfflineWriter extends Thread{
 	 */
 	public ArrayList<UserMessage> getMessages(User user) {
 		ArrayList<UserMessage> messageList = null;
-		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+		try{
 			Object obj = null;
 			if(ois.available() > 0) {
 				obj = ois.readObject();
@@ -105,5 +106,16 @@ public class OfflineWriter extends Thread{
 		}
 		return messageList;
 	}
-
+	
+	/**
+	 * Safely closes the streams
+	 */
+	public void shutDown() {
+		try {
+			ois.close();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
