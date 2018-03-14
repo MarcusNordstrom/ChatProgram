@@ -47,7 +47,7 @@ public class TCPServer {
 	public void broadcastUserList() {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
-			System.out.println("Sending UserList to " + clients.getUser().getName());
+			System.out.println("UserList uppdate sent to:" + clients.getUser().getName());
 			System.out.flush();
 		}
 	}
@@ -64,7 +64,7 @@ public class TCPServer {
 		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
-			System.out.println("Client connected");
+			System.out.println("\n----NEW CLIENT INFO----");
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
 				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -98,7 +98,7 @@ public class TCPServer {
 						 */
 						if (obj instanceof User) {
 							User readUser = (User) obj;
-							System.out.println("Recieved User: " + readUser.getName());
+							System.out.println("Name:" + readUser.getName());
 							System.out.flush();
 							user = readUser;
 							onlineMap.put(user, this);
@@ -116,12 +116,11 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
-							System.out.println("Incomming UserMessage!");
+							System.out.println("\n----NEW MESSAGE INFO----");
 							System.out.println(msg);
 							for (User client : msg.getReceivers().getList()) {
 								if (onlineMap.containsKey(client)) {
 									onlineMap.get(client).sendUserMessage(msg);
-									System.out.println("Send message to: " + client.getName());
 								}
 //									ow.writeMessageToFile(msg, client);
 							}
@@ -133,12 +132,12 @@ public class TCPServer {
 							 * from onlineList, removes user and ClientHandler from onlineMap.
 							 */
 						} else if (obj instanceof SystemMessage) {
-							System.out.println("Sys message receve");
+							System.out.println("\n----SYSTEMMESSAGE----");
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
 								if (smsg.getInstruction().equals("DISCONNECT")) {
-									System.out.println("Client Disconnecting");
+									System.out.println(socket.getInetAddress() + " disconnected");
 									System.out.flush();
 									socket.close();
 									onlineList.removeUser(user);
@@ -149,12 +148,12 @@ public class TCPServer {
 							}
 						} else
 							System.out.println("Not a readable Object");
-					} else if (socket.isClosed()) {
-						Object obj = objectInputStream.readObject();
-						if (obj instanceof UserMessage) {
-							UserMessage storeMessage = (UserMessage) obj;
-							offlineMessages.put(storeMessage);
-						}
+//					} else if (socket.isClosed()) {
+//						Object obj = objectInputStream.readObject();
+//						if (obj instanceof UserMessage) {
+//							UserMessage storeMessage = (UserMessage) obj;
+//							offlineMessages.put(storeMessage);
+//						}
 					}
 				}
 
@@ -179,7 +178,6 @@ public class TCPServer {
 		 */
 		public void sendUserMessage(UserMessage message) {
 			try {
-				System.out.println("Sending UserMessage to " + user.getName());
 				objectOutputStream.writeObject(message);
 				objectOutputStream.flush();
 			} catch (IOException e) {
@@ -213,6 +211,7 @@ public class TCPServer {
 				try {
 					Socket socket = serverSocket.accept();
 					clientList.add(new ClientHandler(socket));
+					System.out.println("ip: " + socket.getInetAddress());
 					for (ClientHandler client : clientList) {
 						pool.execute(client);
 					}
