@@ -2,97 +2,81 @@ package resources;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.swing.DefaultBoundedRangeModel;
+
 public class SaveContacts {
-	private int index = 0;
 	private String folderpath = "savedContacts/";
-	private String format = ".txt";
+	private String format = ".data";
+	private HashMap<User, File> userHashMap;
+	private ObjectInputStream ois;
+	private ObjectOutputStream oos;
 	
-	public void saveToList(User from, User to) {
-		if(searchLists(from) != null && !checkIfUserExists(to)) {
-			try(FileWriter fw = new FileWriter(searchLists(from), true);
-				    BufferedWriter bw = new BufferedWriter(fw);
-				    PrintWriter out = new PrintWriter(bw))
-				{
-				    out.println(to.getName());
-				    out.close();
-				} catch (IOException e) {
-					e.fillInStackTrace();
-				}
-		}else if(searchLists(from) == null) {
-			try(FileWriter fw = new FileWriter(new File(folderpath + from.getName() + format), true);
-				    BufferedWriter bw = new BufferedWriter(fw);
-				    PrintWriter out = new PrintWriter(bw))
-				{
-				    out.println(from.getName());
-				    out.println(to.getName());
-				    out.close();
-				} catch (IOException e) {
-				    e.fillInStackTrace();
-				}
+	public SaveContacts() {
+		userHashMap = new HashMap<User, File>();
+	}
+	public void save(User from, User to) {
+		if (userExists(from)) {
+			try {
+				ois = new ObjectInputStream(new FileInputStream(getFile(from)));
+				oos = new ObjectOutputStream(new FileOutputStream(getFile(from)));
+				UserList list = (UserList) ois.readObject();
+				list.addUser(to);
+				oos.writeObject(list);
+				oos.flush();
+				oos.close();
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		} else if (!userExists(from)) {
+			try {
+				File file = new File(folderpath + from.getName() + format);
+				FileOutputStream fos = new FileOutputStream(file);
+				oos = new ObjectOutputStream(fos);
+				UserList list = new UserList();
+				list.addUser(to);
+				userHashMap.put(from, file);
+				oos.writeObject(list);
+				oos.flush();
+				oos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	public ArrayList<String> read(User from) {
-		ArrayList<String> returnArr = new ArrayList<String>();
-		try {
-			Scanner scan = new Scanner(searchLists(from));
-			scan.next();
-			while(scan.hasNext()) {
-				returnArr.add(scan.next());
-			}
-		} catch (FileNotFoundException e) {
+
+	public UserList get(User from) {
+		UserList returnList = new UserList();
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getFile(from)))){
+				returnList = (UserList)ois.readObject();
+				ois.close();
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return returnArr;
+		return returnList;
 	}
-	public File searchLists(User from) {
-		File dir = new File(folderpath);
-		Scanner scan;
-		for(File file : dir.listFiles()) {
-			try {
-				scan = new Scanner(file);
-				while(scan.hasNext()) {
-					if(scan.next().equals(from.getName())) {
-						return file;
-					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+
+	public boolean userExists(User from) {
+		return userHashMap.containsKey(from);
 	}
-	public boolean checkIfUserExists(User to) {
-		File dir = new File(folderpath);
-		Scanner scan;
-		for(File file : dir.listFiles()) {
-			try {
-				scan = new Scanner(file);
-				while(scan.hasNext()) {
-					if(scan.next().equals(to.getName())) {
-						return true;
-					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
+
+	public File getFile(User from) {
+		return userHashMap.get(from);
 	}
-	public static void main(String[] args) {
-		User bando = new User("Bando", null);
-		User markvatr = new User("Anna", null);
-		SaveContacts demo = new SaveContacts();
-		demo.saveToList(bando, markvatr);
-		for(String users : demo.read(bando)) {
-			System.out.println(users);
-		}
-		
+	public String toString() {
+		return userHashMap.toString();
 	}
+	
+
 }
