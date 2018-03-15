@@ -1,15 +1,19 @@
 package chatServer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 import resources.Buffer;
 import resources.SystemMessage;
@@ -26,6 +30,7 @@ public class TCPServer {
 	private HashMap<User, ClientHandler> onlineMap = new HashMap<User, ClientHandler>();
 	private UserList onlineList = new UserList();
 	private OfflineWriter ow;
+	private ArrayList<String> logg = new ArrayList<String>();
 
 	/*
 	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
@@ -44,10 +49,31 @@ public class TCPServer {
 		connection.start();
 	}
 
+	public void writeLogg(ArrayList<String> logg) {
+		String str = null;
+		String test = null;
+		Date date = new Date();
+		for(int i=0; i < logg.size(); i++) {
+			if(logg.get(i) != null) {
+				str += date + logg.get(i) + "\n\n";
+			}
+		}
+
+		try {
+			RandomAccessFile raf = new RandomAccessFile("Logging", "rw");
+			byte [] buff = str.getBytes();
+			raf.write(buff);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void broadcastUserList() {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
 			System.out.println("UserList uppdate sent to:" + clients.getUser().getName());
+			logg.add("UserList uppdate sent to:" + clients.getUser().getName());
 			System.out.flush();
 		}
 	}
@@ -65,6 +91,7 @@ public class TCPServer {
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
 			System.out.println("\n----NEW CLIENT INFO----");
+			logg.add(socket.getInetAddress() + "connected");
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
 				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -99,17 +126,18 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Name:" + readUser.getName());
+							logg.add("User object recived: " +readUser.getName());
 							System.out.flush();
 							user = readUser;
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
 							broadcastUserList();
-//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
-//							if (offlineMessageList != null) {
-//								for (UserMessage message : offlineMessageList) {
-//									sendUserMessage(message);
-//								}
-//							}
+							//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
+							//							if (offlineMessageList != null) {
+							//								for (UserMessage message : offlineMessageList) {
+							//									sendUserMessage(message);
+							//								}
+							//							}
 							/*
 							 * If object read is an instance of UserMessage: -The object is set to the type
 							 * UserMessage.
@@ -117,12 +145,13 @@ public class TCPServer {
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							System.out.println("\n----NEW MESSAGE INFO----");
+							logg.add("UserMessage object recived");
 							System.out.println(msg);
 							for (User client : msg.getReceivers().getList()) {
 								if (onlineMap.containsKey(client)) {
 									onlineMap.get(client).sendUserMessage(msg);
 								}
-//									ow.writeMessageToFile(msg, client);
+								//									ow.writeMessageToFile(msg, client);
 							}
 
 							/*
@@ -133,27 +162,31 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("\n----SYSTEMMESSAGE----");
+							logg.add("SystemMessage object recived");
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
+								logg.add("SystemMessage contains no payload");
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println(socket.getInetAddress() + " disconnected");
+									logg.add(socket.getInetAddress() + "disconnected");
 									System.out.flush();
 									socket.close();
 									onlineList.removeUser(user);
 									onlineMap.remove(user, this);
 									clientList.remove(this);
 									broadcastUserList();
+									writeLogg(logg);
 								}
 							}
 						} else
 							System.out.println("Not a readable Object");
-//					} else if (socket.isClosed()) {
-//						Object obj = objectInputStream.readObject();
-//						if (obj instanceof UserMessage) {
-//							UserMessage storeMessage = (UserMessage) obj;
-//							offlineMessages.put(storeMessage);
-//						}
+						//					} else if (socket.isClosed()) {
+						//						Object obj = objectInputStream.readObject();
+						//						if (obj instanceof UserMessage) {
+						//							UserMessage storeMessage = (UserMessage) obj;
+						//							offlineMessages.put(storeMessage);
+						//						}
 					}
 				}
 
@@ -207,11 +240,13 @@ public class TCPServer {
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
+			logg.add("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
 			while (true) {
 				try {
 					Socket socket = serverSocket.accept();
 					clientList.add(new ClientHandler(socket));
 					System.out.println("ip: " + socket.getInetAddress());
+					logg.add("ip: " + socket.getInetAddress());
 					for (ClientHandler client : clientList) {
 						pool.execute(client);
 					}
