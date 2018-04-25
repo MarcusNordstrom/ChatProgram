@@ -138,32 +138,44 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnWrite) {
 			String receivers = writetp.getText();
+			writetp.setText("");
 			String[] receivArr = receivers.split(",");
 			UserList retList = new UserList();
+			Boolean breaker = false;
 			// user inputed receivers
 			for (String s : receivArr) {
 				// compare to online users
-				for (String res : receivArr) {
-					for (int i = 0; i < userListOnline.size(); i++) {
-						if (s.equals(userListOnline.getUser(i).getName())) {
-							retList.addUser(userListOnline.getUser(i));
+				for(int i = 0; i < userListOnline.getList().size();i++) {
+					if(userListOnline.getUser(i).getName().equals(s) && !breaker) {
+						retList.addUser(new User(s, null));
+						breaker = true;
+					}else if(!breaker){
+						for(int j = 0; j < userListSaved.getList().size(); j++) {
+							if(userListSaved.getUser(j).getName().equals(s)) {
+								retList.addUser(new User(s, null));
+								breaker = true;
+							}
 						}
 					}
 				}
 			}
-			newChat(receivers, retList);
+			if(breaker) {
+				newChat(receivers, retList);
+				breaker = false;
+			}
 		}
 		if (e.getSource() == btnContacts) {
-			System.out.println("Offline 1");
+			
 			String saveContact = writetp.getText();
+			writetp.setText("");
 			String[] saveArr = saveContact.split(",");
-			System.out.println("Offline 2 " + saveArr.toString());
+			
 			UserList List = new UserList();
 			for(String s : saveArr) {
 				List.addUser(new User(s, null));
 			}
-			System.out.println("Offline 3");
-			client.setOfflineList(List);		
+			
+			client.setOfflineList(List ,userListOnline);		
 			
 		}
 		if (e.getSource() == btnDisconnect) {
@@ -232,9 +244,12 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 	}
 
-	public void updateOffline(UserList offlineList) {
-		for (int i = 0; i < offlineList.size(); i++) {
-			offlinetp.setText(offlinetp.getText() + offlineList.getUser(i).getName() + "\n");
+	public void updateOffline(UserList arg1) {
+		UserList ul = (UserList)arg1;
+		userListSaved = ul;
+		offlinetp.setText("");
+		for (int i = 0; i < ul.size(); i++) {
+			offlinetp.setText(offlinetp.getText() + ul.getUser(i).getName() + "\n");
 		}
 		
 	}

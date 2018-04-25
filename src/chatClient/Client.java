@@ -79,7 +79,7 @@ public class Client extends Observable {
 		}
 	}
 
-	public void setOfflineList(UserList ul) {
+	public void setOfflineList(UserList ul, UserList ol) {
 		String temp = "";
 		String old = "";
 		System.out.println("Offline 4");
@@ -93,16 +93,25 @@ public class Client extends Observable {
 				}
 			}else {
 				System.out.println("Offline 5");
-				for (int i = 0; i < offlineList.getList().size(); i++) {
-					for (int j = 0; j < ul.getList().size(); j++) {
-						temp = ul.getUser(j).getName();
-						old = offlineList.getUser(i).getName();
-						System.out.println("Is " + temp + " in offlineList? " + old);
-						if (!temp.equals(old)) {
-							offlineList.addUser(ul.getUser(j));
-							System.out.println("Added: " + ul.getUser(j) + " to offlineList");
-
+				User u;
+				for (int j = 0; j < ul.getList().size(); j++) {
+					u = null;
+					for (int i = 0; i < offlineList.getList().size(); i++) {
+						if(!(ul.getUser(j).getName()).equals(offlineList.getUser(i).getName())) {
+							u = ul.getUser(j);
+						}else {
+							u = null;
 						}
+					}
+					for (int i = 0; i < ol.getList().size(); i++) {
+						if(!ol.getUser(i).getName().equals(u.getName()) && u != null) {
+							u = null;
+							break;
+						}
+						
+					}
+					if(u != null) {
+						offlineList.addUser(u);
 					}
 				}
 			}

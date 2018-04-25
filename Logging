@@ -1,79 +1,73 @@
-null14:08  Server running, listening to port: 12345
+null10:33  Server running, listening to port: 12345
 
 
-14:08 /127.0.0.1connected
+10:33 /127.0.0.1connected
 
-14:08 ip: /127.0.0.1
+10:33 ip: /127.0.0.1
 
-14:08 /127.0.0.1connected
+10:33 User object recived: Sebbe
 
-14:08 ip: /127.0.0.1
+10:33 UserList uppdate sent to:Sebbe
 
-14:08 /127.0.0.1connected
+10:33 SystemMessage object recived
 
-14:08 ip: /127.0.0.1
+10:33 SystemMessage contains no payload
 
-14:08 User object recived: hej
+10:33 /127.0.0.1disconnected
 
-14:08 UserList uppdate sent to:hej
+10:33 /127.0.0.1connected
 
-14:08 SystemMessage object recived
+10:33 ip: /127.0.0.1
 
-14:08 SystemMessage contains no payload
+10:33 User object recived: Sebbe
 
-14:08 /127.0.0.1disconnected
+10:33 UserList uppdate sent to:Sebbe
 
-14:08 /127.0.0.1connected
+10:33 SystemMessage object recived
 
-14:08 ip: /127.0.0.1
+10:33 SystemMessage contains no payload
 
-14:08 /127.0.0.1connected
+10:33 /127.0.0.1disconnected
 
-14:08 ip: /127.0.0.1
+10:33 /127.0.0.1connected
 
-14:08 User object recived: hej
+10:33 ip: /127.0.0.1
 
-14:08 UserList uppdate sent to:hej
+10:33 User object recived: Sebbe
 
-14:08 SystemMessage object recived
+10:33 UserList uppdate sent to:Sebbe
 
-14:08 SystemMessage contains no payload
+10:33 /127.0.0.1connected
 
-14:08 /127.0.0.1disconnected
+10:33 ip: /127.0.0.1
 
-14:08 /127.0.0.1connected
+10:33 User object recived: lul
 
-14:08 ip: /127.0.0.1
+10:33 UserList uppdate sent to:Sebbe
 
-14:08 User object recived: hej
+10:33 UserList uppdate sent to:lul
 
-14:08 UserList uppdate sent to:hej
+10:33 UserMessage object recived
 
-14:08 /127.0.0.1connected
+10:33 UserMessage object recived
 
-14:08 ip: /127.0.0.1
+10:33 UserMessage object recived
 
-14:08 /127.0.0.1connected
+10:33 SystemMessage object recived
 
-temMessage contains no payload
+10:33 SystemMessage contains no payload
 
-13:49 /127.0.0.1disconnected
+10:33 /127.0.0.1disconnected
 
-ge contains no payload
+10:33 UserList uppdate sent to:Sebbe
 
-13:42 /127.0.0.1disconnected
+10:33 SystemMessage object recived
 
-11:24 UserMessage object recived
+10:33 SystemMessage contains no payload
 
-11:24 UserMessage object recived
+10:33 /127.0.0.1disconnected
 
-11:24 SystemMessage object recived
-
-11:24 SystemMessage contains no payload
-
-11:24 /127.0.0.1disconnected
-
-11:24 UserList uppdate sent to:a
+serList uppdate sent to:a
 
 11:24 SystemMessage object recived
 
