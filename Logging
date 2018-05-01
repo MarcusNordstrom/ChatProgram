@@ -1,93 +1,22 @@
-null10:33  Server running, listening to port: 12345
-
-
-10:33 /127.0.0.1connected
-
-10:33 ip: /127.0.0.1
-
-10:33 User object recived: Sebbe
-
-10:33 UserList uppdate sent to:Sebbe
-
-10:33 SystemMessage object recived
-
-10:33 SystemMessage contains no payload
-
-10:33 /127.0.0.1disconnected
-
-10:33 /127.0.0.1connected
-
-10:33 ip: /127.0.0.1
-
-10:33 User object recived: Sebbe
-
-10:33 UserList uppdate sent to:Sebbe
-
-10:33 SystemMessage object recived
-
-10:33 SystemMessage contains no payload
-
-10:33 /127.0.0.1disconnected
-
-10:33 /127.0.0.1connected
-
-10:33 ip: /127.0.0.1
-
-10:33 User object recived: Sebbe
-
-10:33 UserList uppdate sent to:Sebbe
-
-10:33 /127.0.0.1connected
-
-10:33 ip: /127.0.0.1
-
-10:33 User object recived: lul
-
-10:33 UserList uppdate sent to:Sebbe
-
-10:33 UserList uppdate sent to:lul
-
-10:33 UserMessage object recived
-
-10:33 UserMessage object recived
-
-10:33 UserMessage object recived
-
-10:33 SystemMessage object recived
-
-10:33 SystemMessage contains no payload
-
-10:33 /127.0.0.1disconnected
-
-10:33 UserList uppdate sent to:Sebbe
-
-10:33 SystemMessage object recived
-
-10:33 SystemMessage contains no payload
-
-10:33 /127.0.0.1disconnected
-
-serList uppdate sent to:a
-
-11:24 SystemMessage object recived
-
-11:24 SystemMessage contains no payload
-
-11:24 /127.0.0.1disconnected
-
-ect recived
-
-11:04 SystemMessage contains no payload
-
-11:04 /127.0.0.1disconnected
-
-4 SystemMessage object recived
-
-10:34 SystemMessage contains no payload
-
-10:34 /127.0.0.1disconnected
-
-10:34 UserList uppdate sent to:a
-
-10:34 /127.0.0.1connected
-
+ 
+2018/05/01 11:39:09:     Server running, listening to port: 12345
+ 
+2018/05/01 11:25:08:    2018/05/01 11:25:08/192.168.0.12connected
+ 
+2018/05/01 11:25:08:    ip: /192.168.0.12
+ 
+2018/05/01 11:25:10:    User object recived: f
+ 
+2018/05/01 11:25:10:    UserList uppdate sent to:f
+ 
+2018/05/01 11:25:27:    UserMessage object recived
+ 
+2018/05/01 11:25:32:    UserMessage object recived
+ 
+2018/05/01 11:25:36:    UserMessage object recived
+ 
+2018/05/01 11:25:55:    UserMessage object recived
+ 
+2018/05/01 11:25:57:    UserMessage object recived
+ 
+2018/05/01 11:26:05:    UserMessage object recived

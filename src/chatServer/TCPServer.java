@@ -1,20 +1,15 @@
 package chatServer;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 import resources.Buffer;
 import resources.SystemMessage;
@@ -54,20 +49,17 @@ public class TCPServer {
 		writeLogg(logg);
 	}
 
+	public String time() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		return dtf.format(now);
+	}
+	
 	public void writeLogg(ArrayList<String> logg) {
-		String str = null;
-		String test = null;
-		Date today;
-		String result;
-		SimpleDateFormat formatter;
-		
-		formatter = new SimpleDateFormat("HH:mm");
-		today = new Date();
-		result = formatter.format(today);
-
+		String str = "";
 		for(int i=0; i < logg.size(); i++) {
 			if(logg.get(i) != null) {
-				str += result + " "+ logg.get(i) + "\n\n";
+				str +=" "+ logg.get(i) + "\n";
 			}
 		}
 
@@ -85,7 +77,7 @@ public class TCPServer {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
 			System.out.println("UserList uppdate sent to:" + clients.getUser().getName());
-			logg.add("UserList uppdate sent to:" + clients.getUser().getName());
+			logg.add( "\n" + time() + ":    " +"UserList uppdate sent to:" + clients.getUser().getName());
 			doLogg();
 			System.out.flush();
 		}
@@ -103,8 +95,8 @@ public class TCPServer {
 		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
-			System.out.println("\n----NEW CLIENT INFO----");
-			logg.add(socket.getInetAddress() + "connected");
+			System.out.println("\n----NEW CLIENT INFO----" +time());
+			logg.add( "\n" + time() + ":    " + time() + socket.getInetAddress() + "connected");
 			doLogg();
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -141,7 +133,7 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Name:" + readUser.getName());
-							logg.add("User object recived: " +readUser.getName());
+							logg.add( "\n" + time() + ":    " +"User object recived: " +readUser.getName());
 							doLogg();
 							System.out.flush();
 							user = readUser;
@@ -161,7 +153,7 @@ public class TCPServer {
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							System.out.println("\n----NEW MESSAGE INFO----");
-							logg.add("UserMessage object recived");
+							logg.add( "\n" + time() + ":    " +"UserMessage object recived");
 							doLogg();
 							System.out.println(msg);
 							for (User client : msg.getReceivers().getList()) {
@@ -179,16 +171,16 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("\n----SYSTEMMESSAGE----");
-							logg.add("SystemMessage object recived");
+							logg.add( "\n" + time() + ":    " +"SystemMessage object recived");
 							doLogg();
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
-								logg.add("SystemMessage contains no payload");
+								logg.add( "\n" + time() + ":    " +"SystemMessage contains no payload");
 								doLogg();
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println(socket.getInetAddress() + " disconnected");
-									logg.add(socket.getInetAddress() + "disconnected");
+									logg.add( "\n" + time() + ":    " +socket.getInetAddress() + "disconnected");
 									doLogg();
 									System.out.flush();
 									socket.close();
@@ -259,14 +251,14 @@ public class TCPServer {
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
-			logg.add(" Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
+			logg.add( "\n" + time() + ":    " +" Server running, listening to port: " + serverSocket.getLocalPort());
 			doLogg();
 			while (true) {
 				try {
 					Socket socket = serverSocket.accept();
 					clientList.add(new ClientHandler(socket));
 					System.out.println("ip: " + socket.getInetAddress());
-					logg.add("ip: " + socket.getInetAddress());
+					logg.add( "\n" + time() + ":    " +"ip: " + socket.getInetAddress());
 					for (ClientHandler client : clientList) {
 						pool.execute(client);
 					}

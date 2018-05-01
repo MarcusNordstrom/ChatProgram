@@ -32,7 +32,7 @@ public class ServerUI extends JPanel implements ActionListener {
 	private JTextArea jtafrom = new JTextArea("Enter logg-date from:");
 	private JTextArea jtato = new JTextArea("Enter logg-date to");
 
-	private JButton jbtExit = new JButton("EXIT");
+//	private JButton jbtExit = new JButton("EXIT");
 	private JButton jbtLogg = new JButton("LOGG");
 	private JScrollPane jsp = new JScrollPane(jta);
 	private ArrayList<String> logg = new ArrayList<String>();
@@ -44,29 +44,26 @@ public class ServerUI extends JPanel implements ActionListener {
 	public ServerUI() {
 		setLayout(new BorderLayout());
 		add(jsp, BorderLayout.CENTER);
-		add(jbtExit, BorderLayout.WEST);
+//		add(jbtExit, BorderLayout.WEST);
 		add(jbtLogg, BorderLayout.EAST);
 		add(jtato, BorderLayout.SOUTH);
 		add(jtafrom,BorderLayout.NORTH);
 
 
 		jbtLogg.addActionListener(this);
-		jbtExit.addActionListener(this);
+//		jbtExit.addActionListener(this);
 
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == jbtExit) {
-			ow.shutDown();
-		}
+//		if(e.getSource() == jbtExit) {
+//			ow.shutDown();
+//		}
 
 		if(e.getSource() == jbtLogg) {
 			String str = null;
-			String test = null;
-
-
 
 			try {
 				BufferedReader br = new BufferedReader(new FileReader("Logging"));
