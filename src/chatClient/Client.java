@@ -1,5 +1,7 @@
 package chatClient;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,6 +27,8 @@ public class Client extends Observable {
 	private UserList ul = null;
 	private ServerListener sl;
 	private User self;
+	private UserList offlineList;
+	private UIUsers uiUser;
 
 	/**
 	 * Constructor
@@ -53,6 +57,76 @@ public class Client extends Observable {
 			oos.writeObject(new User("kent", new ImageIcon()));
 			oos.flush();
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void getOfflineList() {
+		try {
+			ObjectInputStream fois = new ObjectInputStream(new FileInputStream("files/LocalOfflineMap.txt"));
+			offlineList = (UserList) fois.readObject();
+			System.out.println(offlineList.getList().toString());
+			if(offlineList.getList().size() <= 0) {
+				offlineList = null;
+				System.out.println("Empty list");
+			}else {
+				System.out.println(offlineList.toString());
+				uiUser.updateOffline(offlineList);
+			}
+		} catch (IOException | ClassNotFoundException e) {
+			offlineList = null;
+			System.out.println("Empty list");
+		}
+	}
+
+	public void setOfflineList(UserList ul, UserList ol) {
+		String temp = "";
+		String old = "";
+		System.out.println("Offline 4");
+		try {
+			if (offlineList == null) {
+				offlineList = new UserList();
+				System.out.println("Empty OfflineList");
+				for(int i = 0; i < ul.getList().size(); i++) {
+					offlineList.addUser(ul.getUser(i));
+					System.out.println("Added: " + ul.getUser(i) + " to offlineList");
+				}
+			}else {
+				System.out.println("Offline 5");
+				User u;
+				for (int j = 0; j < ul.getList().size(); j++) {
+					u = null;
+					for (int i = 0; i < offlineList.getList().size(); i++) {
+						if(!(ul.getUser(j).getName()).equals(offlineList.getUser(i).getName())) {
+							u = ul.getUser(j);
+						}else {
+							u = null;
+						}
+					}
+					for (int i = 0; i < ol.getList().size(); i++) {
+						if(!ol.getUser(i).getName().equals(u.getName()) && u != null) {
+							u = null;
+							break;
+						}
+						
+					}
+					if(u != null) {
+						offlineList.addUser(u);
+					}
+				}
+			}
+			
+			uiUser.updateOffline(offlineList);
+		} catch (NullPointerException e) {
+			System.err.println(e.toString());
+		}
+		
+		try {
+			ObjectOutputStream foos = new ObjectOutputStream(new FileOutputStream("files/LocalOfflineMap.txt"));
+			foos.writeObject(offlineList);
+			foos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -198,7 +272,12 @@ public class Client extends Observable {
 		}
 		setChanged();
 		notifyObservers(um);
-		
+
+	}
+
+	public void addUIUsers(UIUsers uiUsers) {
+		this.uiUser = uiUsers;
+
 	}
 
 }
