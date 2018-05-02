@@ -40,8 +40,9 @@ public class ServerUI extends JPanel implements ActionListener {
 		jbtLogg.addActionListener(this);
 	}
 
-	/*
+	/**
 	 * Displays server logg in UI.
+	 * @param logg
 	 */
 	public void fullLogg(ArrayList<String> logg) {
 		fullLogg = logg;
@@ -52,8 +53,9 @@ public class ServerUI extends JPanel implements ActionListener {
 		reLogg();
 	}
 
-	/*
+	/**
 	 * Displays chosen logg in UI
+	 * @param logg
 	 */
 	public void logg(ArrayList<String> logg) {
 		jta.setText("");
@@ -62,8 +64,9 @@ public class ServerUI extends JPanel implements ActionListener {
 		}
 	}
 
-	/*
+	/**
 	 * UI get server as return.
+	 * @param server
 	 */
 	public void uiToServer(TCPServer server) {
 		this.server = server;
@@ -77,7 +80,7 @@ public class ServerUI extends JPanel implements ActionListener {
 		}
 	}
 	
-	/*
+	/**
 	 * filters the dates if they are given. Otherwise it loggs the full logg.
 	 */
 	private void reLogg() {

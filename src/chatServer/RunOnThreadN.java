@@ -47,15 +47,17 @@ public class RunOnThreadN {
 
 	private class Buffer<T>{
 		private LinkedList<T> buffer = new LinkedList<T>();
-		/*
+		
+		/**
 		 * adds an object to the buffer
+		 * @param obj
 		 */
 		public synchronized void put(T obj) {
 			buffer.addLast(obj);
 			notifyAll();
 		}
 
-		/*
+		/**
 		 * returns the first element in the buffer then removes it.
 		 */
 		public synchronized T get() throws InterruptedException {
@@ -65,8 +67,8 @@ public class RunOnThreadN {
 			return buffer.removeFirst();
 		}
 
-		/*
-		 * clears the buffer.
+		/**
+		 * clears the buffer
 		 */
 		public synchronized void clear() {
 			buffer.clear();
@@ -74,8 +76,10 @@ public class RunOnThreadN {
 	}
 
 
-	/*
+	/**
 	 * Gets the buffer and runs it when a thread is not interrupted.
+	 * @author JakeODonnell
+	 *
 	 */
 	private class Worker extends Thread {
 		public void run() {
