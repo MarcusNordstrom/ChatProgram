@@ -26,6 +26,7 @@ public class TCPServer {
 	private HashMap<User, ClientHandler> onlineMap = new HashMap<User, ClientHandler>();
 	private UserList onlineList = new UserList();
 	private OfflineWriter ow;
+	private ServerUI sui;
 	private ArrayList<String> logg = new ArrayList<String>();
 	
 
@@ -33,8 +34,10 @@ public class TCPServer {
 	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
 	 */
 
-	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow) {
+	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow , ServerUI sui) {
 		this.ow = ow;
+		this.sui = sui;
+		sui.uiToServer(this);
 		pool = new RunOnThreadN(nbrOfThreads);
 		try {
 			serverSocket = new ServerSocket(port);
@@ -45,9 +48,7 @@ public class TCPServer {
 		pool.start();
 		connection.start();
 	}
-	public void doLogg() {
-		writeLogg(logg);
-	}
+	
 
 	public String time() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -55,29 +56,15 @@ public class TCPServer {
 		return dtf.format(now);
 	}
 	
-	public void writeLogg(ArrayList<String> logg) {
-		String str = "";
-		for(int i=0; i < logg.size(); i++) {
-			if(logg.get(i) != null) {
-				str +=" "+ logg.get(i) + "\n";
-			}
-		}
-
-		try {
-			RandomAccessFile raf = new RandomAccessFile("Logging", "rw");
-			byte [] buff = str.getBytes();
-			raf.write(buff);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void doLogg() {
+		sui.logg(logg);
 	}
 
 	public void broadcastUserList() {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
 			System.out.println("UserList uppdate sent to:" + clients.getUser().getName());
-			logg.add( "\n" + time() + ":    " +"UserList uppdate sent to:" + clients.getUser().getName());
+			logg.add( "\n" + time() + "||    " +"UserList uppdate sent to:" + clients.getUser().getName() + "||");
 			doLogg();
 			System.out.flush();
 		}
@@ -96,7 +83,7 @@ public class TCPServer {
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
 			System.out.println("\n----NEW CLIENT INFO----" +time());
-			logg.add( "\n" + time() + ":    " + time() + socket.getInetAddress() + "connected");
+			logg.add( "\n" + time() + "||    " + time() + socket.getInetAddress() + "connected ||");
 			doLogg();
 			try {
 				objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -133,7 +120,7 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Name:" + readUser.getName());
-							logg.add( "\n" + time() + ":    " +"User object recived: " +readUser.getName());
+							logg.add( "\n" + time() + "||    " +"User object recived: " +readUser.getName() + "||");
 							doLogg();
 							System.out.flush();
 							user = readUser;
@@ -153,7 +140,7 @@ public class TCPServer {
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							System.out.println("\n----NEW MESSAGE INFO----");
-							logg.add( "\n" + time() + ":    " +"UserMessage object recived");
+							logg.add( "\n" + time() + "||    " +"UserMessage object recived ||");
 							doLogg();
 							System.out.println(msg);
 							for (User client : msg.getReceivers().getList()) {
@@ -171,16 +158,16 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("\n----SYSTEMMESSAGE----");
-							logg.add( "\n" + time() + ":    " +"SystemMessage object recived");
+							logg.add( "\n" + time() + "||    " +"SystemMessage object recived ||");
 							doLogg();
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
-								logg.add( "\n" + time() + ":    " +"SystemMessage contains no payload");
+								logg.add( "\n" + time() + "||    " +"SystemMessage contains no payload ||");
 								doLogg();
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println(socket.getInetAddress() + " disconnected");
-									logg.add( "\n" + time() + ":    " +socket.getInetAddress() + "disconnected");
+									logg.add( "\n" + time() + "||    " +socket.getInetAddress() + "disconnected ||");
 									doLogg();
 									System.out.flush();
 									socket.close();
@@ -251,14 +238,14 @@ public class TCPServer {
 		 */
 		public void run() {
 			System.out.println("Server running, listening to port: " + serverSocket.getLocalPort() + "\n");
-			logg.add( "\n" + time() + ":    " +" Server running, listening to port: " + serverSocket.getLocalPort());
+			logg.add(time() + "||    " +" Server running, listening to port: " + serverSocket.getLocalPort() + "||");
 			doLogg();
 			while (true) {
 				try {
 					Socket socket = serverSocket.accept();
 					clientList.add(new ClientHandler(socket));
 					System.out.println("ip: " + socket.getInetAddress());
-					logg.add( "\n" + time() + ":    " +"ip: " + socket.getInetAddress());
+					logg.add( "\n" + time() + "||    " +"ip: " + socket.getInetAddress() + "||");
 					for (ClientHandler client : clientList) {
 						pool.execute(client);
 					}

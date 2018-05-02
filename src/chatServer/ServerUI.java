@@ -1,38 +1,25 @@
 package chatServer;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-
-import chatClient.UIChat;
 
 public class ServerUI extends JPanel implements ActionListener {
 
 	private JTextArea jta = new JTextArea(12, 12);
 
-	private JTextArea jtafrom = new JTextArea("Enter logg-date from:");
-	private JTextArea jtato = new JTextArea("Enter logg-date to");
+	private JTextArea jtafrom = new JTextArea("Date from: yyyy/MM/dd HH:mm:ss");
+	private JTextArea jtato = new JTextArea("Date to yyyy/MM/dd HH:mm:ss");
 
-//	private JButton jbtExit = new JButton("EXIT");
+	// private JButton jbtExit = new JButton("EXIT");
 	private JButton jbtLogg = new JButton("LOGG");
 	private JScrollPane jsp = new JScrollPane(jta);
 	private ArrayList<String> logg = new ArrayList<String>();
@@ -44,45 +31,53 @@ public class ServerUI extends JPanel implements ActionListener {
 	public ServerUI() {
 		setLayout(new BorderLayout());
 		add(jsp, BorderLayout.CENTER);
-//		add(jbtExit, BorderLayout.WEST);
+		// add(jbtExit, BorderLayout.WEST);
 		add(jbtLogg, BorderLayout.EAST);
 		add(jtato, BorderLayout.SOUTH);
-		add(jtafrom,BorderLayout.NORTH);
-
+		add(jtafrom, BorderLayout.NORTH);
 
 		jbtLogg.addActionListener(this);
-//		jbtExit.addActionListener(this);
+		// jbtExit.addActionListener(this);
 
 	}
 
+	public void logg(ArrayList<String> logg) {
+		for (String s : logg) {
+			jta.setText(jta.getText() + s + "\n");
+		}
+	}
+
+	public void uiToServer(TCPServer server) {
+		this.server = server;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-//		if(e.getSource() == jbtExit) {
-//			ow.shutDown();
-//		}
+		// if(e.getSource() == jbtExit) {
+		// ow.shutDown();
+		// }
 
-		if(e.getSource() == jbtLogg) {
-			String str = null;
-
+		if (e.getSource() == jbtLogg) {
+			logg = new ArrayList<String>();
+			String allText = jta.getText();
+			String[] split = allText.split("||");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Date dateLogg;
+			Date dateStart;
+			Date dateStop;
 			try {
-				BufferedReader br = new BufferedReader(new FileReader("Logging"));
-				StringBuilder sb = new StringBuilder();
-				String line = br.readLine();
+				dateStart = sdf.parse(jtafrom.getText());
+				dateStop = sdf.parse(jtato.getText());
 
-				while (line != null) {
-					sb.append(line);
-					sb.append(System.lineSeparator());
-					line = br.readLine();
-					logg.add(line);
+				for (int i = 0; i < split.length; i += 2) {
+					dateLogg = sdf.parse(split[i]);
+
+					if (dateLogg.after(dateStart)) {
+
+					}
+
 				}
-				str = sb.toString();
-				jta.setText(str);
-
-
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
+			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
 		}
