@@ -118,7 +118,7 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Name:" + readUser.getName());
-							logg.add( "\n" + time() + "||    " +"User object recived: " +readUser.getName() + "||");
+							logg.add(time() + ";;    " +"User object recived: " +readUser.getName() + "\n;;");
 							doLogg();
 							System.out.flush();
 							user = readUser;
@@ -139,7 +139,7 @@ public class TCPServer {
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							System.out.println("\n----NEW MESSAGE INFO----");
-							logg.add( "\n" + time() + "||    " +"UserMessage object recived ||");
+							logg.add(time() + ";;    " +"UserMessage object recived \n;;");
 							doLogg();
 							System.out.println(msg);
 							addOffline(msg);
@@ -152,16 +152,16 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("\n----SYSTEMMESSAGE----");
-							logg.add( "\n" + time() + "||    " +"SystemMessage object recived ||");
+							logg.add( "\n" + time() + ";;    " +"SystemMessage object recived \n;;");
 							doLogg();
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
-								logg.add( "\n" + time() + "||    " +"SystemMessage contains no payload ||");
+								logg.add(time() + ";;    " +"SystemMessage contains no payload \n;;");
 								doLogg();
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println(socket.getInetAddress() + " disconnected");
-									logg.add( "\n" + time() + "||    " +socket.getInetAddress() + "disconnected ||");
+									logg.add(time() + ";;    " +socket.getInetAddress() + "disconnected \n;;");
 									doLogg();
 									System.out.flush();
 									socket.close();

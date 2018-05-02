@@ -11,13 +11,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 
 public class ServerUI extends JPanel implements ActionListener {
 
 	private JTextArea jta = new JTextArea(12, 12);
 
-	private JTextArea jtafrom = new JTextArea("Date from: yyyy/MM/dd HH:mm:ss");
-	private JTextArea jtato = new JTextArea("Date to yyyy/MM/dd HH:mm:ss");
+	private JTextArea jtafrom = new JTextArea("yyyy/MM/dd HH:mm:ss");
+	private JTextArea jtato = new JTextArea("yyyy/MM/dd HH:mm:ss");
 
 	// private JButton jbtExit = new JButton("EXIT");
 	private JButton jbtLogg = new JButton("LOGG");
@@ -36,7 +39,8 @@ public class ServerUI extends JPanel implements ActionListener {
 		add(jbtLogg, BorderLayout.EAST);
 		add(jtato, BorderLayout.SOUTH);
 		add(jtafrom, BorderLayout.NORTH);
-
+		jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jsp.setAutoscrolls(true);
 		jbtLogg.addActionListener(this);
 		// jbtExit.addActionListener(this);
 
@@ -45,13 +49,13 @@ public class ServerUI extends JPanel implements ActionListener {
 	public void fullLogg(ArrayList<String> logg) {
 		fullLogg = logg;
 		jta.setText("");
-		for (String s : logg) {
+		for (String s : fullLogg) {
 			jta.setText(jta.getText() + s);
 		}
+		reLogg();
 	}
 
 	public void logg(ArrayList<String> logg) {
-
 		jta.setText("");
 		for (String s : logg) {
 			jta.setText(jta.getText() + s);
@@ -69,19 +73,25 @@ public class ServerUI extends JPanel implements ActionListener {
 		// }
 
 		if (e.getSource() == jbtLogg) {
-			ArrayList<String> templogg = new ArrayList<String>();
-			String allText = "";
-			for(String s : this.logg) {
-				allText += s;
-			}
-			String[] split = allText.split(";;");
-			System.out.println(split.length);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd\\HH:mm:ss");
-			Date dateLogg;
-			Date dateStart;
-			Date dateStop;
-			try {
-				if(!(jtafrom.getText().equals("")) || !(jtato.getText().equals(""))) {
+			reLogg();
+		}
+	}
+
+	private void reLogg() {
+		ArrayList<String> templogg = new ArrayList<String>();
+		String allText = "";
+		for (String s : fullLogg) {
+			allText += s;
+		}
+		String[] split = allText.split(";;");
+		System.out.println(split.length);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd\\HH:mm:ss");
+		Date dateLogg;
+		Date dateStart;
+		Date dateStop;
+		try {
+			if ( !(jtafrom.getText().equals("")) && !(jtato.getText().equals("")) && !(jtafrom.getText().equals("yyyy/MM/dd HH:mm:ss")) && 
+					!(jtato.getText().equals("yyyy/MM/dd HH:mm:ss") ) ) {
 				dateStart = sdf.parse(jtafrom.getText());
 				dateStop = sdf.parse(jtato.getText());
 
@@ -96,10 +106,21 @@ public class ServerUI extends JPanel implements ActionListener {
 
 				}
 				logg(templogg);
+			}else {
+				String all = "";
+				for(String str : fullLogg) {
+					all+=str;
 				}
-			} catch (ParseException e1) {
-				e1.printStackTrace();
+				String[] temp = all.split(";;");
+				ArrayList<String> repaint = new ArrayList<String>();
+				for(String s : temp) {
+					repaint.add(s);
+				}
+				logg(repaint);
 			}
+		} catch (ParseException e1) {
+			e1.printStackTrace();
 		}
+
 	}
 }
