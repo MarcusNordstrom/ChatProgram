@@ -46,7 +46,6 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	private UserList userListSaved;
 	private ArrayList<TestChat> chattList = new ArrayList<TestChat>();
 
-	
 	/**
 	 * Constructor
 	 * 
@@ -126,11 +125,10 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	}
 
 	/**
-	 * Creating functions for the buttons.
-	 * Opens the window UIChat when button "write" is pressed. 
-	 * Adding the receiver based on what was written in the text field.
-	 * Disconnect if button "exit" is pressed.
-	 * Adding user to contacts if button "add to contacts" is pressed.
+	 * Creating functions for the buttons. Opens the window UIChat when button
+	 * "write" is pressed. Adding the receiver based on what was written in the text
+	 * field. Disconnect if button "exit" is pressed. Adding user to contacts if
+	 * button "add to contacts" is pressed.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnWrite) {
@@ -140,51 +138,51 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 			UserList retList = new UserList();
 			Boolean breaker = false;
 			// user inputed receivers
-			
+
 			UserList temp = new UserList();
-			for(int i = 0; i < userListOnline.getList().size();i++) {
+			for (int i = 0; i < userListOnline.getList().size(); i++) {
 				temp.addUser(userListOnline.getUser(i));
 			}
-			for(int i = 0; i < userListSaved.getList().size(); i++) {
+			for (int i = 0; i < userListSaved.getList().size(); i++) {
 				temp.addUser(userListSaved.getUser(i));
 			}
-			
+
 			for (String s : receivArr) {
-				for(int i = 0; i < temp.getList().size();i++) {
-					if(s.equals(temp.getUser(i).getName())) {
+				for (int i = 0; i < temp.getList().size(); i++) {
+					if (s.equals(temp.getUser(i).getName())) {
 						retList.addUser(temp.getUser(i));
 					}
 				}
 			}
-			if(retList.getList().size()>0) {
+			if (retList.getList().size() > 0) {
 				newChat(receivers, retList);
-				
+
 			}
 		}
 		if (e.getSource() == btnContacts) {
-			
+
 			String saveContact = writetp.getText();
 			writetp.setText("");
 			String[] saveArr = saveContact.split(",");
-			
+
 			UserList List = new UserList();
-			for(String s : saveArr) {
+			for (String s : saveArr) {
 				List.addUser(new User(s, null));
 			}
-			
-			client.setOfflineList(List ,userListOnline);		
-			
+
+			client.setOfflineList(List, userListOnline);
+
 		}
+		if (e.getSource() == btnDisconnect)
 
-		client.setOfflineList(List, userListOnline);
-
-	}if(e.getSource()==btnDisconnect)
-	{
-		client.exit();
+		{
+			client.exit();
+		}
 	}
-	
+
 	/**
-	 * Opening a new chat window 
+	 * Opening a new chat window
+	 * 
 	 * @param receivers
 	 * @param retList
 	 */
@@ -201,8 +199,7 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	}
 
 	/**
-	 * Observes if new users are online and updates the list 
-	 * with online users.
+	 * Observes if new users are online and updates the list with online users.
 	 */
 	public void update(Observable o, Object arg) {
 		if (arg instanceof UserList) {
@@ -238,12 +235,13 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	}
 
 	/**
-	 * Closing all open chat windows 
+	 * Closing all open chat windows
+	 * 
 	 * @param res
 	 */
 	public void closeChat(String res) {
-		for(int i = 0; i < chattList.size(); i++) {
-			if(chattList.get(i).getResName().equals(res)) {
+		for (int i = 0; i < chattList.size(); i++) {
+			if (chattList.get(i).getResName().equals(res)) {
 				System.out.println("removing chat with: " + chattList.get(i).getResName() + " equal to " + res);
 				chattList.remove(i);
 
@@ -253,11 +251,12 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	}
 
 	/**
-	 * Updates the list in UI with saved offline contacts.  
+	 * Updates the list in UI with saved offline contacts.
+	 * 
 	 * @param arg1
 	 */
 	public void updateOffline(UserList arg1) {
-		UserList ul = (UserList)arg1;
+		UserList ul = (UserList) arg1;
 		userListSaved = ul;
 		offlinetp.setText("");
 		for (int i = 0; i < ul.size(); i++) {
