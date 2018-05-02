@@ -22,6 +22,7 @@ public class ServerUI extends JPanel implements ActionListener {
 	// private JButton jbtExit = new JButton("EXIT");
 	private JButton jbtLogg = new JButton("LOGG");
 	private JScrollPane jsp = new JScrollPane(jta);
+	private ArrayList<String> fullLogg = new ArrayList<String>();
 	private ArrayList<String> logg = new ArrayList<String>();
 
 	private TCPServer server;
@@ -41,9 +42,19 @@ public class ServerUI extends JPanel implements ActionListener {
 
 	}
 
-	public void logg(ArrayList<String> logg) {
+	public void fullLogg(ArrayList<String> logg) {
+		fullLogg = logg;
+		jta.setText("");
 		for (String s : logg) {
-			jta.setText(jta.getText() + s + "\n");
+			jta.setText(jta.getText() + s);
+		}
+	}
+
+	public void logg(ArrayList<String> logg) {
+
+		jta.setText("");
+		for (String s : logg) {
+			jta.setText(jta.getText() + s);
 		}
 	}
 
@@ -58,25 +69,33 @@ public class ServerUI extends JPanel implements ActionListener {
 		// }
 
 		if (e.getSource() == jbtLogg) {
-			logg = new ArrayList<String>();
-			String allText = jta.getText();
+			ArrayList<String> templogg = new ArrayList<String>();
+			String allText = "";
+			for(String s : this.logg) {
+				allText += s;
+			}
 			String[] split = allText.split(";;");
+			System.out.println(split.length);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd\\HH:mm:ss");
 			Date dateLogg;
 			Date dateStart;
 			Date dateStop;
 			try {
+				if(!(jtafrom.getText().equals("")) || !(jtato.getText().equals(""))) {
 				dateStart = sdf.parse(jtafrom.getText());
 				dateStop = sdf.parse(jtato.getText());
 
 				for (int i = 0; i < split.length; i += 2) {
-					System.out.println(split[i]);
-					dateLogg = sdf.parse(split[i]);
+					String temp = split[i];
+					System.out.println(temp + " " + i);
+					dateLogg = sdf.parse(temp);
 
 					if (dateLogg.after(dateStart) && dateLogg.before(dateStop)) {
-						logg.add(split[i] + split[i+1]);
+						templogg.add(split[i] + split[i + 1]);
 					}
 
+				}
+				logg(templogg);
 				}
 			} catch (ParseException e1) {
 				e1.printStackTrace();
