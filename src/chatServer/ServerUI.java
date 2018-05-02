@@ -60,8 +60,8 @@ public class ServerUI extends JPanel implements ActionListener {
 		if (e.getSource() == jbtLogg) {
 			logg = new ArrayList<String>();
 			String allText = jta.getText();
-			String[] split = allText.split("||");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			String[] split = allText.split(";;");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd\\HH:mm:ss");
 			Date dateLogg;
 			Date dateStart;
 			Date dateStop;
@@ -70,6 +70,7 @@ public class ServerUI extends JPanel implements ActionListener {
 				dateStop = sdf.parse(jtato.getText());
 
 				for (int i = 0; i < split.length; i += 2) {
+					System.out.println(split[i]);
 					dateLogg = sdf.parse(split[i]);
 
 					if (dateLogg.after(dateStart) && dateLogg.before(dateStop)) {
