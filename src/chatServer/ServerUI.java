@@ -21,31 +21,29 @@ public class ServerUI extends JPanel implements ActionListener {
 
 	private JTextArea jtafrom = new JTextArea("yyyy/MM/dd HH:mm:ss");
 	private JTextArea jtato = new JTextArea("yyyy/MM/dd HH:mm:ss");
-
-	// private JButton jbtExit = new JButton("EXIT");
 	private JButton jbtLogg = new JButton("LOGG");
 	private JScrollPane jsp = new JScrollPane(jta);
 	private ArrayList<String> fullLogg = new ArrayList<String>();
 	private ArrayList<String> logg = new ArrayList<String>();
-
 	private TCPServer server;
 	private OfflineWriter ow;
-	JPanel jp = new JPanel();
+	private JPanel jp = new JPanel();
 
 	public ServerUI() {
 		setLayout(new BorderLayout());
 		add(jsp, BorderLayout.CENTER);
-		// add(jbtExit, BorderLayout.WEST);
 		add(jbtLogg, BorderLayout.EAST);
 		add(jtato, BorderLayout.SOUTH);
 		add(jtafrom, BorderLayout.NORTH);
 		jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		jsp.setAutoscrolls(true);
 		jbtLogg.addActionListener(this);
-		// jbtExit.addActionListener(this);
-
 	}
 
+	/**
+	 * Displays server logg in UI.
+	 * @param logg
+	 */
 	public void fullLogg(ArrayList<String> logg) {
 		fullLogg = logg;
 		jta.setText("");
@@ -55,6 +53,10 @@ public class ServerUI extends JPanel implements ActionListener {
 		reLogg();
 	}
 
+	/**
+	 * Displays chosen logg in UI
+	 * @param logg
+	 */
 	public void logg(ArrayList<String> logg) {
 		jta.setText("");
 		for (String s : logg) {
@@ -62,21 +64,25 @@ public class ServerUI extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * UI get server as return.
+	 * @param server
+	 */
 	public void uiToServer(TCPServer server) {
 		this.server = server;
 	}
 
-	@Override
+	
 	public void actionPerformed(ActionEvent e) {
-		// if(e.getSource() == jbtExit) {
-		// ow.shutDown();
-		// }
 
 		if (e.getSource() == jbtLogg) {
 			reLogg();
 		}
 	}
-
+	
+	/**
+	 * filters the dates if they are given. Otherwise it loggs the full logg.
+	 */
 	private void reLogg() {
 		ArrayList<String> templogg = new ArrayList<String>();
 		String allText = "";

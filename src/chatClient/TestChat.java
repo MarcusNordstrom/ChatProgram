@@ -144,6 +144,7 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 
 			taWrite.setText("");			
 			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			sendingImage = null;
 		}
 		if (e.getSource() == btnAppend) {
 			JFileChooser filechooser = new JFileChooser();

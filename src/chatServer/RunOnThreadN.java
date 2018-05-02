@@ -13,9 +13,8 @@ public class RunOnThreadN {
 	}
 
 	/*
-	 * Trådarna måste instantieras och startas. Instansvariabeln n håller antalet trådar.
+	 * Threds are instansiated and started. Instantialvariable contains the number of threads.
 	 */
-	
 	public synchronized void start() {
 		Worker worker;
 		if(workers==null) {
@@ -28,10 +27,9 @@ public class RunOnThreadN {
 		}
 	}
 
-	/* Trådarna bör kunna avslutas – Detta kan ske omedelbart (eventuella objekt i
-	 *bufferten exekveras ej) eller då bufferten är tömd (se alternativ stop-metod).
+	/*
+	 * Threads have to be exited - This kan be done immediately (Possible objects in the buffer will not be executed).
 	 */
-	
 	public synchronized void stop() {	
 		if(workers!=null) {
 			buffer.clear();
@@ -43,28 +41,25 @@ public class RunOnThreadN {
 
 	}
 
-
 	public synchronized void execute(Runnable runnable) {
 		buffer.put(runnable);
 	}
 
-
-
-
 	private class Buffer<T>{
 		private LinkedList<T> buffer = new LinkedList<T>();
-		/*
-		 * Lägger till ett objekt i bufferten
+		
+		/**
+		 * adds an object to the buffer
+		 * @param obj
 		 */
 		public synchronized void put(T obj) {
 			buffer.addLast(obj);
 			notifyAll();
 		}
 
-		/*
-		 * Returnar första elementet i bufferten samt tar bort den sedan
+		/**
+		 * returns the first element in the buffer then removes it.
 		 */
-
 		public synchronized T get() throws InterruptedException {
 			while(buffer.isEmpty()) {
 				wait();
@@ -72,20 +67,20 @@ public class RunOnThreadN {
 			return buffer.removeFirst();
 		}
 
-		/*
-		 * Returnar första elementet i bufferten samt tar bort den sedan
+		/**
+		 * clears the buffer
 		 */
-
 		public synchronized void clear() {
 			buffer.clear();
 		}
 	}
 
 
-	/*
-	 * Hämtar buffer och kör den då thread inte är intrrupted.
+	/**
+	 * Gets the buffer and runs it when a thread is not interrupted.
+	 * @author JakeODonnell
+	 *
 	 */
-
 	private class Worker extends Thread {
 		public void run() {
 			while(!Thread.interrupted()) {
