@@ -37,8 +37,6 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	private JTextPane writetp = new JTextPane();
 	private JTextPane onlinetp = new JTextPane();
 	private JTextPane offlinetp = new JTextPane();
-	private String[] online = new String[20];
-	private String[] savedUsers = new String[20];
 	private JPanel panelOnline = new JPanel();
 	private JPanel panelSavedUsers = new JPanel();
 	private JFrame frame;
@@ -46,9 +44,9 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	private Client client;
 	private UserList userListOnline;
 	private UserList userListSaved;
-	private SaveContacts saveContacts;
 	private ArrayList<TestChat> chattList = new ArrayList<TestChat>();
 
+	
 	/**
 	 * Constructor
 	 * 
@@ -112,7 +110,6 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		panelSavedUsers = new JPanel(new BorderLayout());
 		panelSavedUsers.add(lblSavedUsers, BorderLayout.NORTH);
 		panelSavedUsers.add(offlinetp, BorderLayout.CENTER);
-		// panelSavedUsers.add(list, BorderLayout.CENTER);
 		return panelSavedUsers;
 	}
 
@@ -163,36 +160,20 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 				newChat(receivers, retList);
 				
 			}
-				
-				
-				// compare to online users
-//				for(int i = 0; i < userListOnline.getList().size();i++) {
-//					if(userListOnline.getUser(i).getName().equals(s) && !breaker) {
-//						retList.addUser(new User(s, null));
-//						breaker = true;
-//					}else if(!breaker){
-//						for(int j = 0; j < userListSaved.getList().size(); j++) {
-//							if(userListSaved.getUser(j).getName().equals(s)) {
-//								retList.addUser(new User(s, null));
-//								breaker = true;
-//							}
-//						}
-//					}
-//				}		
+		}
+		if (e.getSource() == btnContacts) {
+			
+			String saveContact = writetp.getText();
+			writetp.setText("");
+			String[] saveArr = saveContact.split(",");
+			
+			UserList List = new UserList();
+			for(String s : saveArr) {
+				List.addUser(new User(s, null));
 			}
-//			if(breaker) {
-//				newChat(receivers, retList);
-//				breaker = false;
-//			}
-		if(e.getSource()==btnContacts){
-
-		String saveContact = writetp.getText();
-		writetp.setText("");
-		String[] saveArr = saveContact.split(",");
-
-		UserList List = new UserList();
-		for (String s : saveArr) {
-			List.addUser(new User(s, null));
+			
+			client.setOfflineList(List ,userListOnline);		
+			
 		}
 
 		client.setOfflineList(List, userListOnline);
@@ -201,9 +182,12 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	{
 		client.exit();
 	}
-
-	}
-
+	
+	/**
+	 * Opening a new chat window 
+	 * @param receivers
+	 * @param retList
+	 */
 	public void newChat(String receivers, UserList retList) {
 		frame = new JFrame();
 		TestChat chat = new TestChat(client, receivers, retList, this, frame);
@@ -253,6 +237,10 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 	}
 
+	/**
+	 * Closing all open chat windows 
+	 * @param res
+	 */
 	public void closeChat(String res) {
 		for(int i = 0; i < chattList.size(); i++) {
 			if(chattList.get(i).getResName().equals(res)) {
@@ -264,6 +252,10 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 	}
 
+	/**
+	 * Updates the list in UI with saved offline contacts.  
+	 * @param arg1
+	 */
 	public void updateOffline(UserList arg1) {
 		UserList ul = (UserList)arg1;
 		userListSaved = ul;
@@ -271,6 +263,6 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		for (int i = 0; i < ul.size(); i++) {
 			offlinetp.setText(offlinetp.getText() + ul.getUser(i).getName() + "\n");
 		}
-		
+
 	}
 }
