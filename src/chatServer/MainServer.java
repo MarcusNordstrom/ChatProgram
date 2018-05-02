@@ -6,8 +6,13 @@ import java.util.Date;
 
 import javax.swing.JFrame;
 
-public class MainServer {
+/**
+ * Quick Thread that starts the entire TCP server including UI.
+ * @author UncleBen
+ *
+ */
 
+public class MainServer {
 	public static void main(String[] args) {
 		OfflineWriter ow = new OfflineWriter("files/OfflineMap.txt");
 		ServerUI sui = new ServerUI();
