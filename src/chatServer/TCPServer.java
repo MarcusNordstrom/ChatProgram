@@ -98,7 +98,7 @@ public class TCPServer {
 		}
 
 		public synchronized void run() {
-			
+
 			try {
 				while (true) {
 					/*
@@ -107,11 +107,7 @@ public class TCPServer {
 					 * 
 					 */
 					if (!socket.isClosed()) {
-						if (offlineMessages.size() > 0) {
-							for(int i = 0; i < offlineMessages.size(); i++) {
-								sendUserMessage(offlineMessages.get());
-							}
-						}
+						checkOfflineMessage();
 						Object obj = objectInputStream.readObject();
 						/*
 						 * If object read is an instance of user: -The object is set to the type user.
@@ -122,18 +118,13 @@ public class TCPServer {
 						if (obj instanceof User) {
 							User readUser = (User) obj;
 							System.out.println("Name:" + readUser.getName());
-							logg.add(time() + ";;" +"User object recived: " +readUser.getName() + "\n;;");
+							logg.add( "\n" + time() + "||    " +"User object recived: " +readUser.getName() + "||");
 							doLogg();
 							System.out.flush();
 							user = readUser;
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
-							if(offline.checkName(user.getName())) {
-								System.out.println("User has offline messages!\nSending offline messages...");
-								for(UserMessage message : offline.receive(user.getName())) {
-									onlineMap.get(user).sendUserMessage(message);
-								}
-							}
+							getOfflineMessage();
 							broadcastUserList();
 							//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
 							//							if (offlineMessageList != null) {
@@ -148,18 +139,10 @@ public class TCPServer {
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
 							System.out.println("\n----NEW MESSAGE INFO----");
-							logg.add(time() + ";;" +"UserMessage object recived\n;;");
+							logg.add( "\n" + time() + "||    " +"UserMessage object recived ||");
 							doLogg();
 							System.out.println(msg);
-							for (User client : msg.getReceivers().getList()) {
-								if (onlineMap.containsKey(client)) {
-									onlineMap.get(client).sendUserMessage(msg);
-								}else {
-									System.err.println("User not in the list\nSaving to offline list");
-									offline.add(msg);
-								}
-								//									ow.writeMessageToFile(msg, client);
-							}
+							addOffline(msg);
 
 							/*
 							 * If object read is an instance of SystemMessage: -The object is set to the
@@ -169,16 +152,16 @@ public class TCPServer {
 							 */
 						} else if (obj instanceof SystemMessage) {
 							System.out.println("\n----SYSTEMMESSAGE----");
-							logg.add(time() + ";; " +"SystemMessage object recived\n;;");
+							logg.add( "\n" + time() + "||    " +"SystemMessage object recived ||");
 							doLogg();
 							SystemMessage smsg = (SystemMessage) obj;
 							if (smsg.getPayload() == null) {
 								System.out.println("no payload");
-								logg.add(time() + ";; " +"SystemMessage contains no payload\n;;");
+								logg.add( "\n" + time() + "||    " +"SystemMessage contains no payload ||");
 								doLogg();
 								if (smsg.getInstruction().equals("DISCONNECT")) {
 									System.out.println(socket.getInetAddress() + " disconnected");
-									logg.add(time() + ";; " +socket.getInetAddress() + "disconnected\n;;");
+									logg.add( "\n" + time() + "||    " +socket.getInetAddress() + "disconnected ||");
 									doLogg();
 									System.out.flush();
 									socket.close();
@@ -213,6 +196,35 @@ public class TCPServer {
 		 */
 		public User getUser() {
 			return this.user;
+		}
+
+		public void addOffline(UserMessage msg) {
+			for (User client : msg.getReceivers().getList()) {
+				if (onlineMap.containsKey(client)) {
+					onlineMap.get(client).sendUserMessage(msg);
+				}else {
+					System.err.println("User not in the list\nSaving to offline list");
+					offline.add(msg);
+				}
+				//									ow.writeMessageToFile(msg, client);
+			}
+		}
+
+		public void checkOfflineMessage() {
+			if (offlineMessages.size() > 0) {
+				for(int i = 0; i < offlineMessages.size(); i++) {
+					sendUserMessage(offlineMessages.get());
+				}
+			}
+		}
+
+		public void getOfflineMessage() {
+			if(offline.checkName(user.getName())) {
+				System.out.println("User has offline messages!\nSending offline messages...");
+				for(UserMessage message : offline.receive(user.getName())) {
+					onlineMap.get(user).sendUserMessage(message);
+				}
+			}
 		}
 
 		/*
