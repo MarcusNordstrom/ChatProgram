@@ -16,9 +16,8 @@ import resources.UserList;
 import resources.UserMessage;
 
 /**
- * 
- * @author Sebastian
- *
+ * The class creates connection between client and server. 
+ * It opens input and output steams to enable communication to server.
  */
 public class Client extends Observable {
 	private Socket socket;
@@ -40,18 +39,16 @@ public class Client extends Observable {
 	public Client(String ip, int port) throws IOException {
 		ul = new UserList();
 		socket = new Socket(ip, port);
-
 		oos = new ObjectOutputStream(socket.getOutputStream());
 		sl = new ServerListener();
 		sl.start();
 	}
 
 	/**
-	 * Testmessage to server
-	 * 
+	 * Sending test message to server
 	 * @param message
 	 */
-	public void send(String message) {// send Test User to server
+	public void send(String message) {
 		System.out.println("Sending test message");
 		try {
 			oos.writeObject(new User("kent", new ImageIcon()));
@@ -61,6 +58,9 @@ public class Client extends Observable {
 		}
 	}
 
+	/**
+	 * Reading from text file all the saved contacts. 
+	 */
 	public void getOfflineList() {
 		try {
 			ObjectInputStream fois = new ObjectInputStream(new FileInputStream("files/LocalOfflineMap.txt"));
@@ -79,6 +79,11 @@ public class Client extends Observable {
 		}
 	}
 
+	/**
+	 * Writing saved users to text file. 
+	 * @param ul
+	 * @param ol
+	 */
 	public void setOfflineList(UserList ul, UserList ol) {
 		String temp = "";
 		String old = "";
@@ -108,19 +113,19 @@ public class Client extends Observable {
 							u = null;
 							break;
 						}
-						
+
 					}
 					if(u != null) {
 						offlineList.addUser(u);
 					}
 				}
 			}
-			
+
 			uiUser.updateOffline(offlineList);
 		} catch (NullPointerException e) {
 			System.err.println(e.toString());
 		}
-		
+
 		try {
 			ObjectOutputStream foos = new ObjectOutputStream(new FileOutputStream("files/LocalOfflineMap.txt"));
 			foos.writeObject(offlineList);
@@ -133,7 +138,6 @@ public class Client extends Observable {
 
 	/**
 	 * Sends a message to server
-	 * 
 	 * @param message
 	 */
 	public void send(UserMessage message) {
@@ -162,7 +166,7 @@ public class Client extends Observable {
 	/**
 	 * Close the client/socket and disconnect from the server
 	 */
-	public void exit() { // ändra
+	public void exit() { 
 		if (socket != null)
 			try {
 				sendDisconnect();
@@ -172,7 +176,6 @@ public class Client extends Observable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
@@ -188,7 +191,6 @@ public class Client extends Observable {
 	}
 
 	public User getSelf() {
-
 		return self.clone();
 	}
 
@@ -214,8 +216,7 @@ public class Client extends Observable {
 
 	/**
 	 * SubClass that listens to server for messages
-	 * 
-	 * @author Sebastian
+	 *
 	 */
 	private class ServerListener extends Thread {
 		public void run() {
@@ -240,14 +241,12 @@ public class Client extends Observable {
 					} else if (response instanceof SystemMessage) {
 						SystemMessage sm = (SystemMessage) response;
 						if (sm.getPayload() == null) {
-							// Not sure what kind of instruction the server would send to us???
 						} else {
 							if (sm.getPayload() instanceof UserList) {
 								System.out.println("New UserList added");
 								ul = (UserList) (sm.getPayload());
 							}
 						}
-						// Not sure what other messages the server would send
 					} else if (response instanceof UserList) {
 						UserList list = (UserList) response;
 						ul = list.clone();
@@ -267,17 +266,13 @@ public class Client extends Observable {
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		setChanged();
 		notifyObservers(um);
-
 	}
 
 	public void addUIUsers(UIUsers uiUsers) {
 		this.uiUser = uiUsers;
-
 	}
-
 }
