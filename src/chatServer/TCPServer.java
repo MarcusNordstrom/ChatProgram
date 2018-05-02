@@ -8,6 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.sound.midi.SysexMessage;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
@@ -28,6 +31,7 @@ public class TCPServer {
 	private OfflineWriter ow;
 	private ServerUI sui;
 	private ArrayList<String> logg = new ArrayList<String>();
+	private OfflineMessages offline = new OfflineMessages();
 	
 
 	/*
@@ -35,6 +39,7 @@ public class TCPServer {
 	 */
 
 	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow , ServerUI sui) {
+		offline.readFile();
 		this.ow = ow;
 		this.sui = sui;
 		sui.uiToServer(this);
@@ -126,6 +131,12 @@ public class TCPServer {
 							user = readUser;
 							onlineMap.put(user, this);
 							onlineList.addUser(user);
+							if(offline.checkName(user.getName())) {
+								System.out.println("User has offline messages!\nSending offline messages...");
+								for(UserMessage message : offline.receive(user.getName())) {
+									onlineMap.get(user).sendUserMessage(message);
+								}
+							}
 							broadcastUserList();
 							//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
 							//							if (offlineMessageList != null) {
@@ -146,6 +157,9 @@ public class TCPServer {
 							for (User client : msg.getReceivers().getList()) {
 								if (onlineMap.containsKey(client)) {
 									onlineMap.get(client).sendUserMessage(msg);
+								}else {
+									System.err.println("User not in the list\nSaving to offline list");
+									offline.add(msg);
 								}
 								//									ow.writeMessageToFile(msg, client);
 							}

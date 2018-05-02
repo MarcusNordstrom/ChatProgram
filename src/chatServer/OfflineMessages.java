@@ -16,14 +16,17 @@ public class OfflineMessages {
 	private ArrayList<UserMessage> storedMessages = new ArrayList<UserMessage>();
 	private String filePath = "files/OfflineMessages.txt";
 
-	public void add(UserMessage param) {
+	public OfflineMessages() {
+		initFile();
 		readFile();
+	}
+	
+	public void add(UserMessage param) {
 		storedMessages.add(param);
 		saveFile();
 	}
 
 	public ArrayList<UserMessage> receive(String name) {
-		readFile();
 		ArrayList<UserMessage> returnMessages = new ArrayList<UserMessage>();
 		for (Iterator<UserMessage> it = storedMessages.iterator(); it.hasNext();) {
 			UserMessage message = it.next();
@@ -40,7 +43,7 @@ public class OfflineMessages {
 
 	public boolean checkName(String param) {
 		for (UserMessage message : storedMessages) {
-			if (message.getReceivers().getUser(0).equals(param))
+			if (message.getReceivers().getUser(0).getName().equals(param))
 				return true;
 		}
 		return false;
@@ -61,7 +64,7 @@ public class OfflineMessages {
 			oos.reset();
 			oos.flush();
 		} catch (IOException e) {
-			System.err.println("This aint right");
+			System.err.println("Now you fucked up");
 		}
 	}
 
@@ -69,7 +72,7 @@ public class OfflineMessages {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
 			storedMessages = (ArrayList<UserMessage>)ois.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			System.err.println("Hello, now we are here and thats bad.");
+			System.err.println("The list is empty, nothing to read");
 		}
 	}
 
