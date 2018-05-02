@@ -1,4 +1,4 @@
-package chatServer;
+	package chatServer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,7 +34,6 @@ public class TCPServer {
 	/*
 	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
 	 */
-
 	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow , ServerUI sui) {
 		offline.readFile();
 		this.ow = ow;
@@ -51,17 +50,26 @@ public class TCPServer {
 		connection.start();
 	}
 	
-
+	/*
+	 * Returns time right now i a format : yyyy/MM/dd\\HH:mm:ss.
+	 */
 	public String time() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd\\HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		return dtf.format(now);
 	}
 	
+	/*
+	 * Method fullLogg in serverUI is called with logg arraylist as parameter, this arraylist contains all the events happened on the server
+	 * since start
+	 */
 	public void doLogg() {
 		sui.fullLogg(logg);
 	}
 
+	/*
+	 * All clients that are online recives a new UserList. This is used when a new user connects or disconnects.
+	 */
 	public void broadcastUserList() {
 		for (ClientHandler clients : onlineMap.values()) {
 			clients.sendUserList(this.onlineList.clone());
@@ -72,6 +80,13 @@ public class TCPServer {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Jake, Benjamin, Marcus
+	 * 
+	 * ClientHandler handles each connected Client, Messages are recived, sent and handled here.
+	 *
+	 */
 	public class ClientHandler implements Runnable {
 		private User user;
 		private ObjectInputStream objectInputStream;
@@ -104,7 +119,6 @@ public class TCPServer {
 					/*
 					 * checks if socket is connected and if socket is not closed. if true following
 					 * code is executed.
-					 * 
 					 */
 					if (!socket.isClosed()) {
 						checkOfflineMessage();
@@ -126,15 +140,9 @@ public class TCPServer {
 							onlineList.addUser(user);
 							getOfflineMessage();
 							broadcastUserList();
-							//							ArrayList<UserMessage> offlineMessageList = ow.getMessages(user);
-							//							if (offlineMessageList != null) {
-							//								for (UserMessage message : offlineMessageList) {
-							//									sendUserMessage(message);
-							//								}
-							//							}
 							/*
 							 * If object read is an instance of UserMessage: -The object is set to the type
-							 * UserMessage.
+							 * UserMessage. OfflineMessage is added.
 							 */
 						} else if (obj instanceof UserMessage) {
 							UserMessage msg = (UserMessage) obj;
@@ -142,7 +150,7 @@ public class TCPServer {
 							logg.add(time() + ";;    " +"UserMessage object recived \n;;");
 							doLogg();
 							System.out.println(msg);
-							addOffline(msg);
+							sendOfflineMsg(msg);
 
 							/*
 							 * If object read is an instance of SystemMessage: -The object is set to the
@@ -173,12 +181,6 @@ public class TCPServer {
 							}
 						} else
 							System.out.println("Not a readable Object");
-						//					} else if (socket.isClosed()) {
-						//						Object obj = objectInputStream.readObject();
-						//						if (obj instanceof UserMessage) {
-						//							UserMessage storeMessage = (UserMessage) obj;
-						//							offlineMessages.put(storeMessage);
-						//						}
 					}
 				}
 
@@ -198,7 +200,10 @@ public class TCPServer {
 			return this.user;
 		}
 
-		public void addOffline(UserMessage msg) {
+		/*
+		 * Sends the message to user that was offline at the time the sender sent to this receiver
+		 */
+		public void sendOfflineMsg(UserMessage msg) {
 			for (User client : msg.getReceivers().getList()) {
 				if (onlineMap.containsKey(client)) {
 					onlineMap.get(client).sendUserMessage(msg);
@@ -206,10 +211,12 @@ public class TCPServer {
 					System.err.println("User not in the list\nSaving to offline list");
 					offline.add(msg);
 				}
-				//									ow.writeMessageToFile(msg, client);
 			}
 		}
 
+		/*
+		 * checks if offlineMessge is bigger than 0, if yes there is a message.
+		 */
 		public void checkOfflineMessage() {
 			if (offlineMessages.size() > 0) {
 				for(int i = 0; i < offlineMessages.size(); i++) {
@@ -218,6 +225,9 @@ public class TCPServer {
 			}
 		}
 
+		/*
+		 * If Name returns true: gets message and deletes from offline.
+		 */
 		public void getOfflineMessage() {
 			if(offline.checkName(user.getName())) {
 				System.out.println("User has offline messages!\nSending offline messages...");
