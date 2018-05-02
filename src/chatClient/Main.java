@@ -11,14 +11,11 @@ import javax.swing.JRootPane;
 import javax.swing.UIManager;
 
 /**
- * @author Sebastian Carlsson
+ * Connects a client to the server with an ip-address and a port. 
+ * Opening the UI windows.
  *
  */
 public class Main {
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Client client = null;
 		try {
@@ -27,11 +24,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		try {
-			//Sebbe 77.53.42.147
-			//benji 83.248.13.179
-			//Jake 83.254.153.173
-
-			client = new Client("83.248.13.179",12345);
+			client = new Client("192.168.1.69",12345);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

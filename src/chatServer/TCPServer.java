@@ -17,6 +17,12 @@ import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
+/**
+ * 
+ * @author JakeODonnell
+ *
+ * Server is the center for all communication from clients to clients.
+ */
 public class TCPServer {
 
 	private ServerSocket serverSocket;
@@ -31,8 +37,12 @@ public class TCPServer {
 	private OfflineMessages offline = new OfflineMessages();
 	
 
-	/*
+	/**
 	 * Constructor creates new ThreadPoolstart and starts the pool and connection.
+	 * @param port
+	 * @param nbrOfThreads
+	 * @param ow
+	 * @param sui
 	 */
 	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow , ServerUI sui) {
 		offline.readFile();
@@ -95,8 +105,9 @@ public class TCPServer {
 		private Socket socket;
 		private Buffer<UserMessage> offlineMessages = new Buffer<UserMessage>();
 
-		/*
+		/**
 		 * Creates ObjectStreams of input/output. writes onlieList to client.
+		 * @param socket
 		 */
 		public ClientHandler(Socket socket) {
 			this.socket = socket;
@@ -151,7 +162,7 @@ public class TCPServer {
 							logg.add(time() + ";;    " +"UserMessage object recived \n;;");
 							doLogg();
 							System.out.println(msg);
-							sendOfflineMsg(msg);
+							sendMsg(msg);
 
 							/*
 							 * If object read is an instance of SystemMessage: -The object is set to the
@@ -194,17 +205,18 @@ public class TCPServer {
 			System.out.flush();
 		}
 
-		/*
+		/**
 		 * Getter for user.
 		 */
 		public User getUser() {
 			return this.user;
 		}
 
-		/*
+		/**
 		 * Sends the message to user that was offline at the time the sender sent to this receiver
+		 * @param msg
 		 */
-		public void sendOfflineMsg(UserMessage msg) {
+		public void sendMsg(UserMessage msg) {
 			for (User client : msg.getReceivers().getList()) {
 				if (onlineMap.containsKey(client)) {
 					onlineMap.get(client).sendUserMessage(msg);
@@ -215,7 +227,7 @@ public class TCPServer {
 			}
 		}
 
-		/*
+		/**
 		 * checks if offlineMessge is bigger than 0, if yes there is a message.
 		 */
 		public void checkOfflineMessage() {
@@ -226,7 +238,7 @@ public class TCPServer {
 			}
 		}
 
-		/*
+		/**
 		 * If Name returns true: gets message and deletes from offline.
 		 */
 		public void getOfflineMessage() {
@@ -238,8 +250,9 @@ public class TCPServer {
 			}
 		}
 
-		/*
-		 * Method used to send message from one client to another.
+		/**
+		 *  Method used to send message from one client to another.
+		 * @param message
 		 */
 		public void sendUserMessage(UserMessage message) {
 			try {
@@ -251,9 +264,10 @@ public class TCPServer {
 
 		}
 
-		/*
+		/**
 		 * Method used to broadcast UserList when new user is connected so that every
 		 * client has an updated onlineList.
+		 * @param list
 		 */
 		public void sendUserList(UserList list) {
 			try {
@@ -263,10 +277,17 @@ public class TCPServer {
 			}
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author Jake, Marcus och Benjamin
+	 * 
+	 * Conenction handles the connection between server and a client.
+	 *
+	 */
 	public class Connection extends Thread {
 
-		/*
+		/**
 		 * When client has connected a new ClientHandler is created, This ClientHandler
 		 * is also placed in the ThreadPool.
 		 */
@@ -283,7 +304,6 @@ public class TCPServer {
 					for (ClientHandler client : clientList) {
 						pool.execute(client);
 					}
-					// pool.execute(new ClientHandler(socket));
 				} catch (IOException e) {
 					System.err.println(e);
 				}
