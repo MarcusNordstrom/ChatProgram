@@ -72,8 +72,8 @@ public class ServerUI extends JPanel implements ActionListener {
 				for (int i = 0; i < split.length; i += 2) {
 					dateLogg = sdf.parse(split[i]);
 
-					if (dateLogg.after(dateStart)) {
-
+					if (dateLogg.after(dateStart) && dateLogg.before(dateStop)) {
+						logg.add(split[i] + split[i+1]);
 					}
 
 				}
