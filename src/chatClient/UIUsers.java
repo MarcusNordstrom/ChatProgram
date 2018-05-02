@@ -24,8 +24,8 @@ import resources.User;
 
 /**
  * This is the interface for users to see other online users and saved contacts.
- * From here it´s possible to open a new message (UIChat), save online users and
- * quit the program.
+ * From here it´s possible to open a new message (UIChat), save online users
+ * and quit the program.
  * 
  */
 public class UIUsers extends JPanel implements ActionListener, Observer {
@@ -49,9 +49,9 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 	private SaveContacts saveContacts;
 	private ArrayList<TestChat> chattList = new ArrayList<TestChat>();
 
-	
 	/**
-	 * Constructor 
+	 * Constructor
+	 * 
 	 * @param client
 	 * @param frame
 	 */
@@ -73,9 +73,9 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 	/**
 	 * Creating a panel with 3 buttons and a text field.
-	 * @return panel
-	 * 			a panel with GridLayout and 4 components.
-	 */		
+	 * 
+	 * @return panel a panel with GridLayout and 4 components.
+	 */
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new GridLayout(2, 3));
 		panel.add(btnWrite);
@@ -84,11 +84,11 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		panel.add(writetp);
 		return panel;
 	}
-	
+
 	/**
 	 * Creating a panel that shows other online users.
-	 * @return panel
-	 * 			a panel with BorderLayout and 2 components.
+	 * 
+	 * @return panel a panel with BorderLayout and 2 components.
 	 */
 	private JPanel panelOnline() {
 		panelOnline = new JPanel(new BorderLayout());
@@ -102,11 +102,11 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		panelOnline.add(onlinetp, BorderLayout.CENTER);
 		return panelOnline;
 	}
-	
+
 	/**
-	 * Creating a panel that shows saved users. 
-	 * @return panel	
-	 * 			a panel with BorderLayout and 2 components.
+	 * Creating a panel that shows saved users.
+	 * 
+	 * @return panel a panel with BorderLayout and 2 components.
 	 */
 	private JPanel panelSavedUsers() {
 		panelSavedUsers = new JPanel(new BorderLayout());
@@ -118,8 +118,8 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 	/**
 	 * Adding 2 panels that should be shown in the window.
-	 * @return panel
-	 * 			a panel with GridLayout and 2 components.
+	 * 
+	 * @return panel a panel with GridLayout and 2 components.
 	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new GridLayout(2, 0));
@@ -127,7 +127,7 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		panel.add(panelSavedUsers());
 		return panel;
 	}
-	
+
 	/**
 	 * Creating functions for the buttons.
 	 * Opens the window UIChat when button "write" is pressed. 
@@ -143,44 +143,64 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 			UserList retList = new UserList();
 			Boolean breaker = false;
 			// user inputed receivers
+			
+			UserList temp = new UserList();
+			for(int i = 0; i < userListOnline.getList().size();i++) {
+				temp.addUser(userListOnline.getUser(i));
+			}
+			for(int i = 0; i < userListSaved.getList().size(); i++) {
+				temp.addUser(userListSaved.getUser(i));
+			}
+			
 			for (String s : receivArr) {
-				// compare to online users
-				for(int i = 0; i < userListOnline.getList().size();i++) {
-					if(userListOnline.getUser(i).getName().equals(s) && !breaker) {
-						retList.addUser(new User(s, null));
-						breaker = true;
-					}else if(!breaker){
-						for(int j = 0; j < userListSaved.getList().size(); j++) {
-							if(userListSaved.getUser(j).getName().equals(s)) {
-								retList.addUser(new User(s, null));
-								breaker = true;
-							}
-						}
+				for(int i = 0; i < temp.getList().size();i++) {
+					if(s.equals(temp.getUser(i).getName())) {
+						retList.addUser(temp.getUser(i));
 					}
 				}
 			}
-			if(breaker) {
+			if(retList.getList().size()>0) {
 				newChat(receivers, retList);
-				breaker = false;
+				
 			}
-		}
-		if (e.getSource() == btnContacts) {
-			
-			String saveContact = writetp.getText();
-			writetp.setText("");
-			String[] saveArr = saveContact.split(",");
-			
-			UserList List = new UserList();
-			for(String s : saveArr) {
-				List.addUser(new User(s, null));
+				
+				
+				// compare to online users
+//				for(int i = 0; i < userListOnline.getList().size();i++) {
+//					if(userListOnline.getUser(i).getName().equals(s) && !breaker) {
+//						retList.addUser(new User(s, null));
+//						breaker = true;
+//					}else if(!breaker){
+//						for(int j = 0; j < userListSaved.getList().size(); j++) {
+//							if(userListSaved.getUser(j).getName().equals(s)) {
+//								retList.addUser(new User(s, null));
+//								breaker = true;
+//							}
+//						}
+//					}
+//				}		
 			}
-			
-			client.setOfflineList(List ,userListOnline);		
-			
+//			if(breaker) {
+//				newChat(receivers, retList);
+//				breaker = false;
+//			}
+		if(e.getSource()==btnContacts){
+
+		String saveContact = writetp.getText();
+		writetp.setText("");
+		String[] saveArr = saveContact.split(",");
+
+		UserList List = new UserList();
+		for (String s : saveArr) {
+			List.addUser(new User(s, null));
 		}
-		if (e.getSource() == btnDisconnect) {
-			client.exit();
-		}
+
+		client.setOfflineList(List, userListOnline);
+
+	}if(e.getSource()==btnDisconnect)
+	{
+		client.exit();
+	}
 
 	}
 
@@ -195,7 +215,7 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		frame.setVisible(true);
 		chattList.add(chat);
 	}
-	
+
 	/**
 	 * Observes if new users are online and updates the list 
 	 * with online users.

@@ -163,7 +163,14 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			System.out.println("Sending message...1");
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
-			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			UserList sendList;
+			for(int i = 0; i < receivers.size();i++) {
+				sendList = new UserList();
+				sendList.addUser(receivers.getUser(i));
+				client.send(new UserMessage(client.getSelf(),sendList, message, sendingImage));
+			}
+			
+//			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 
 			taWrite.setText("");
 
@@ -290,7 +297,14 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			System.out.println("Sending message...1");
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
-			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			UserList sendList;
+			for(int i = 0; i < receivers.size();i++) {
+				sendList = new UserList();
+				sendList.addUser(receivers.getUser(i));
+				client.send(new UserMessage(client.getSelf(),sendList, message, sendingImage));
+			}
+			
+//			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 
 			taWrite.setText("");
 
@@ -311,7 +325,8 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 //			}
 //			sendingImage = null;
 			
-			testPrint((new UserMessage(client.getSelf(), receivers, message, sendingImage)));
+			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			sendingImage = null;
 		}
 	}
 
