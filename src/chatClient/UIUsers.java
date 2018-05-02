@@ -5,30 +5,22 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.apple.eawt.AppEvent.UserSessionEvent;
-
-import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 import resources.SaveContacts;
+import resources.User;
 
 /**
  * This is the interface for users to see other online users and saved contacts.
@@ -36,7 +28,7 @@ import resources.SaveContacts;
  * quit the program.
  * 
  */
-public class UIUsers extends JPanel implements ActionListener, ListSelectionListener, Observer {
+public class UIUsers extends JPanel implements ActionListener, Observer {
 	private JButton btnWrite = new JButton("Write message");
 	private JButton btnContacts = new JButton("Add to contacts");
 	private JButton btnDisconnect = new JButton("Exit");
@@ -55,7 +47,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	private UserList userListOnline;
 	private UserList userListSaved;
 	private SaveContacts saveContacts;
-	private ArrayList<UIChat> chattList = new ArrayList<UIChat>();
+	private ArrayList<TestChat> chattList = new ArrayList<TestChat>();
 
 	
 	/**
@@ -75,6 +67,8 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 		btnDisconnect.addActionListener(this);
 
 		client.addObserver(this);
+		client.addUIUsers(this);
+		client.getOfflineList();
 	}
 
 	/**
@@ -144,42 +138,44 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnWrite) {
 			String receivers = writetp.getText();
+			writetp.setText("");
 			String[] receivArr = receivers.split(",");
 			UserList retList = new UserList();
+			Boolean breaker = false;
 			// user inputed receivers
 			for (String s : receivArr) {
 				// compare to online users
-				for (String res : receivArr) {
-					for (int i = 0; i < userListOnline.size(); i++) {
-						if (s.equals(userListOnline.getUser(i).getName())) {
-							retList.addUser(userListOnline.getUser(i));
+				for(int i = 0; i < userListOnline.getList().size();i++) {
+					if(userListOnline.getUser(i).getName().equals(s) && !breaker) {
+						retList.addUser(new User(s, null));
+						breaker = true;
+					}else if(!breaker){
+						for(int j = 0; j < userListSaved.getList().size(); j++) {
+							if(userListSaved.getUser(j).getName().equals(s)) {
+								retList.addUser(new User(s, null));
+								breaker = true;
+							}
 						}
 					}
 				}
 			}
-			newChat(receivers, retList);
+			if(breaker) {
+				newChat(receivers, retList);
+				breaker = false;
+			}
 		}
 		if (e.getSource() == btnContacts) {
+			
 			String saveContact = writetp.getText();
+			writetp.setText("");
 			String[] saveArr = saveContact.split(",");
+			
 			UserList List = new UserList();
 			for(String s : saveArr) {
-				for(String res : saveArr) {
-					for(int i = 0; i < userListOnline.size(); i++) {
-						if(s.equals(userListOnline.getUser(i).getName())) {
-							System.out.println(client.getSelf()+"");
-							System.out.println(userListOnline.getUser(i));
-							//saveContacts.saveToList(client.getSelf(),userListOnline.getUser(i));
-						}
-					}
-				}
+				List.addUser(new User(s, null));
 			}
 			
-			
-			
-				
-			
-			
+			client.setOfflineList(List ,userListOnline);		
 			
 		}
 		if (e.getSource() == btnDisconnect) {
@@ -190,7 +186,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	public void newChat(String receivers, UserList retList) {
 		frame = new JFrame();
-		UIChat chat = new UIChat(client, receivers, retList, this, frame);
+		TestChat chat = new TestChat(client, receivers, retList, this, frame);
 		frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(600, 400));
 		frame.add(chat);
@@ -221,7 +217,7 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 				e.printStackTrace();
 			}
 			int i = 0;
-			for (UIChat frame : chattList) {
+			for (TestChat frame : chattList) {
 				if (frame.isReceiver()) {
 					i++;
 				}
@@ -248,9 +244,13 @@ public class UIUsers extends JPanel implements ActionListener, ListSelectionList
 
 	}
 
-	@Override
-	public void valueChanged(ListSelectionEvent arg0) {
-		// TODO Auto-generated method stub
+	public void updateOffline(UserList arg1) {
+		UserList ul = (UserList)arg1;
+		userListSaved = ul;
+		offlinetp.setText("");
+		for (int i = 0; i < ul.size(); i++) {
+			offlinetp.setText(offlinetp.getText() + ul.getUser(i).getName() + "\n");
+		}
 		
 	}
 }

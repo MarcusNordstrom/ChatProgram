@@ -18,11 +18,13 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -43,10 +45,14 @@ import resources.UserMessage;
  * 
  * @author Anna
  */
-public class UIChat extends JPanel implements ActionListener, KeyListener, Observer {
+public class TestChat extends JPanel implements ActionListener, KeyListener, Observer {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3977057218654583094L;
 	private JScrollPane scroll = new JScrollPane();
 	private JLabel lblReceiver = new JLabel("");
-	private JTextPane taMessage = new JTextPane();
+	private JPanel taMessage = new JPanel();
 	private JTextArea taWrite = new JTextArea();
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
@@ -70,7 +76,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	 * @param retList
 	 * @param ui
 	 */
-	public UIChat(Client client, String receiver, UserList retList, UIUsers ui, JFrame frame) {
+	public TestChat(Client client, String receiver, UserList retList, UIUsers ui, JFrame frame) {
 		this.client = client;
 		this.frame = frame;
 		this.ui = ui;
@@ -120,9 +126,10 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new BorderLayout());
+		taMessage.setLayout(new BoxLayout(taMessage ,BoxLayout.Y_AXIS));
 		scroll = new JScrollPane(taMessage);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		taMessage.setEditable(false);
+//		taMessage.setEditable(false);
 		panel.setBackground(Color.WHITE);
 		panel.add(scroll, BorderLayout.CENTER);
 		return panel;
@@ -212,34 +219,35 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 		return atBottom;
 	}
 
-	public void appendTextArea(UserMessage um) {
-		try {
-			String resMess = (um.getUser().getName() + ":     " + um.getContent() + "\n");
-			taMessage.getStyledDocument().insertString(offset, resMess, null);
-			offset += resMess.length();
-			if (um.getImage() != null) {
-				taMessage.select(offset, (offset + 1));
-				taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(),taMessage.getHeight(), Image.SCALE_DEFAULT)));
-						
-				taMessage.getStyledDocument().insertString(offset, "\n", null);
-				offset += resMess.length();
-				taMessage.moveCaretPosition(++offset);
-			}
-		} catch (BadLocationException e1) {
-			e1.printStackTrace();
-		}
-		sendingImage = null;
-	}
+//	public void appendTextArea(UserMessage um) {
+//		try {
+//			String resMess = (um.getUser().getName() + ":     " + um.getContent() + "\n");
+//			taMessage.getStyledDocument().insertString(offset, resMess, null);
+//			offset += resMess.length();
+//			if (um.getImage() != null) {
+//				taMessage.select(offset, (offset + 1));
+//				taMessage.insertIcon(new ImageIcon(um.getImage().getImage().getScaledInstance(taMessage.getWidth(),taMessage.getHeight(), Image.SCALE_DEFAULT)));
+//						
+//				taMessage.getStyledDocument().insertString(offset, "\n", null);
+//				offset += resMess.length();
+//				taMessage.moveCaretPosition(++offset);
+//			}
+//		} catch (BadLocationException e1) {
+//			e1.printStackTrace();
+//		}
+//		sendingImage = null;
+//	}
 	
 	
 	public void testPrint(UserMessage um) {
 		String message = (um.getUser().getName() + ":     " + um.getContent() + "\n");
-		scroll.add(new JLabel(message));
+		taMessage.add(new JLabel(message));
 		
 		if(um.getImage() != null) {
-			scroll.add(new JLabel(um.getImage()));
+			taMessage.add(new JLabel(um.getImage()));
 		}
-		frame.repaint();
+		taMessage.revalidate();
+		taMessage.repaint();
 	}
 
 	/**
@@ -257,7 +265,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 					isReceiver = true;
 
 //					appendTextArea(um);
-					
+					testPrint(um);
 					
 					
 				}
