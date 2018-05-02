@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
@@ -57,22 +58,16 @@ public class OfflineMessages {
 		ArrayList<UserMessage> returnMessages = new ArrayList<UserMessage>();
 		for (Iterator<UserMessage> it = storedMessages.iterator(); it.hasNext();) {
 			UserMessage message = it.next();
-			for (int i = 0; i < message.getReceivers().size(); i++) {
-				if (message.getReceivers().getUser(i).getName().equals(name)) {
+				if (message.getReceivers().getUser(0).getName().equals(name)) {
 					returnMessages.add(message);
-					if(message.getReceivers().size()> 1) {
-						message.getReceivers().removeUser(message.getReceivers().getUser(i));
-						storedMessages.add(message);
-					}
 					it.remove();
 					saveFile();
-					return returnMessages;
 				}
 			}
-		}
 		if (returnMessages.size() > 0)
 			return returnMessages;
 		return null;
+
 	}
 
 	/**
