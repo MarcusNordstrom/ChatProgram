@@ -36,6 +36,7 @@ public class TCPServer {
 	 */
 	public TCPServer(int port, int nbrOfThreads, OfflineWriter ow , ServerUI sui) {
 		offline.readFile();
+		System.out.println(offline);
 		this.ow = ow;
 		this.sui = sui;
 		sui.uiToServer(this);

@@ -87,7 +87,6 @@ public class ServerUI extends JPanel implements ActionListener {
 			allText += s;
 		}
 		String[] split = allText.split(";;");
-		System.out.println(split.length);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd\\HH:mm:ss");
 		Date dateLogg;
 		Date dateStart;
