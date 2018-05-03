@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import java.time.*;
@@ -161,6 +162,7 @@ public class TCPServer {
 							System.out.println("\n----NEW MESSAGE INFO----");
 							logg.add(time() + ";;    " +"UserMessage object recived \n;;");
 							doLogg();
+							msg.setReceived(time());
 							System.out.println(msg);
 							sendMsg(msg);
 
@@ -219,6 +221,7 @@ public class TCPServer {
 		public void sendMsg(UserMessage msg) {
 			for (User client : msg.getReceivers().getList()) {
 				if (onlineMap.containsKey(client)) {
+					msg.setDelivered(time());
 					onlineMap.get(client).sendUserMessage(msg);
 				}else {
 					System.err.println("User not in the list\nSaving to offline list");
@@ -245,6 +248,7 @@ public class TCPServer {
 			if(offline.checkName(user.getName())) {
 				System.out.println("User has offline messages!\nSending offline messages...");
 				for(UserMessage message : offline.receive(user.getName())) {
+					message.setDelivered(time());
 					onlineMap.get(user).sendUserMessage(message);
 				}
 			}

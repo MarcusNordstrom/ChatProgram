@@ -20,8 +20,7 @@ public class UserMessage implements Serializable {
 	private String title;
 	private String content;
 	private ImageIcon image;
-	private Date arrived;
-	private Date delivered;
+	private String receive, delivered;
 	private User user;
 	private UserList receivers;
 
@@ -63,8 +62,8 @@ public class UserMessage implements Serializable {
 	/**
 	 * @return Returns the @Date the message arrived.
 	 */
-	public Date getArrived() {
-		return arrived;
+	public String getArrived() {
+		return receive;
 	}
 
 	/**
@@ -72,14 +71,14 @@ public class UserMessage implements Serializable {
 	 * 
 	 * @param arrived
 	 */
-	public void setArrived(Date arrived) {
-		this.arrived = arrived;
+	public void setReceived(String receive) {
+		this.receive = receive;
 	}
 
 	/**
 	 * @return Get the @Date the message initially delivered.
 	 */
-	public Date getDelivered() {
+	public String getDelivered() {
 		return delivered;
 	}
 
@@ -88,7 +87,7 @@ public class UserMessage implements Serializable {
 	 * 
 	 * @param delivered
 	 */
-	public void setDelivered(Date delivered) {
+	public void setDelivered(String delivered) {
 		this.delivered = delivered;
 	}
 
