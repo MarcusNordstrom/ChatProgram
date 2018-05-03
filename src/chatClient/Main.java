@@ -24,7 +24,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		try {
-			client = new Client("192.168.1.42",12345);
+			client = new Client("192.168.1.69",12345);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -28,6 +28,7 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 
+import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
@@ -43,6 +44,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
 	private JButton btnClose = new JButton("Close");
+	private JLabel resIcon = new JLabel();
 	private ImageIcon sendingImage;
 	private UserList receivers;
 	private UIUsers ui;
@@ -86,6 +88,11 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			});
 		}
 	}
+	
+	public void setResImg(User u) {
+		ImageIcon ic = new ImageIcon(u.getPic().getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT));
+		resIcon.setIcon(ic);
+	}
 
 	/**
 	 * Creating a panel with a label to show the receiver of the message.
@@ -95,6 +102,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(1, 30));
+		panel.add(resIcon, BorderLayout.WEST);
 		panel.add(lblReceiver, BorderLayout.CENTER);
 		panel.add(btnClose, BorderLayout.EAST);
 		return panel;

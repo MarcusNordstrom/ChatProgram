@@ -154,6 +154,7 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 				}
 			}
 			if (retList.getList().size() > 0) {
+				System.out.println(retList.getUser(0).getPic());
 				newChat(receivers, retList);
 
 			}
@@ -166,7 +167,11 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 
 			UserList List = new UserList();
 			for (String s : saveArr) {
-				List.addUser(new User(s, null));
+				for(User onlineList : userListOnline.getList()) {
+					if(s.equals(onlineList.getName())){
+						List.addUser(new User(s, onlineList.getPic()));
+					}
+				}
 			}
 
 			client.setOfflineList(List, userListOnline);
@@ -195,6 +200,8 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		chattList.add(chat);
+		User u = retList.getUser(0);
+		chat.setResImg(u);
 	}
 
 	/**

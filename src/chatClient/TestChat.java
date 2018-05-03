@@ -4,6 +4,7 @@ import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -24,6 +25,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+
+import resources.User;
 import resources.UserList;
 import resources.UserMessage;
 
@@ -40,6 +43,7 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 	private JButton btnSend = new JButton("Send");
 	private JButton btnAppend = new JButton(new ImageIcon("images/gem.png"));
 	private JButton btnClose = new JButton("Close");
+	private JLabel resIcon = new JLabel(new ImageIcon());
 	private ImageIcon sendingImage;
 	private UserList receivers;
 	private UIUsers ui;
@@ -83,6 +87,12 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			});
 		}
 	}
+	
+	public void setResImg(User u) {
+		ImageIcon ic = new ImageIcon(receivers.getUser(0).getPic().getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+		resIcon.setIcon(ic);
+		frame.repaint();
+	}
 
 	/**
 	 * Creating a panel with a label to show the receiver of the message.
@@ -92,6 +102,7 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 	private JPanel panelTop() {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(1, 30));
+		panel.add(resIcon, BorderLayout.WEST);
 		panel.add(lblReceiver, BorderLayout.CENTER);
 		panel.add(btnClose, BorderLayout.EAST);
 		return panel;
@@ -190,7 +201,7 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 	}
 
 	public void testPrint(UserMessage um) {
-		String message = (um.getUser().getName() + ":     " + um.getContent() + "\n");
+		String message = (um.getUser().getName() + ":(" + um.getDelivered() + ")   "  + um.getContent() + "\n");
 		taMessage.add(new JLabel(message));
 		
 		if(um.getImage() != null) {
