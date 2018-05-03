@@ -129,6 +129,7 @@ public class Client extends Observable {
 		try {
 			oos.writeObject(message);
 			oos.flush();
+			oos.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

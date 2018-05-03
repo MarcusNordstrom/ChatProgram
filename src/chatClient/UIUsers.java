@@ -145,16 +145,17 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 			for (int i = 0; i < userListSaved.getList().size(); i++) {
 				temp.addUser(userListSaved.getUser(i));
 			}
-
+			System.out.println(receivArr.length);
 			for (String s : receivArr) {
 				for (int i = 0; i < temp.getList().size(); i++) {
 					if (s.equals(temp.getUser(i).getName())) {
 						retList.addUser(temp.getUser(i));
+						break;
 					}
 				}
 			}
 			if (retList.getList().size() > 0) {
-				System.out.println(retList.getUser(0).getPic());
+				System.out.println(retList.getList().size());
 				newChat(receivers, retList);
 
 			}
@@ -232,7 +233,12 @@ public class UIUsers extends JPanel implements ActionListener, Observer {
 			if (i == 0) {
 				JFrame chatFrame = new JFrame();
 				UserList ul = new UserList();
-				ul.addUser(um.getUser());
+//				ul.addUser(um.getUser());
+				for(User onlineList : userListOnline.getList()) {
+					if(um.getUser().getName().equals(onlineList.getName())){
+						ul.addUser(new User(um.getUser().getName(), onlineList.getPic()));
+					}
+				}
 				newChat(um.getUser().getName(), ul);
 				client.resend(um);
 			}

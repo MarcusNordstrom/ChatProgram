@@ -62,7 +62,11 @@ public class User implements Serializable {
 	 * @return ImageIcon
 	 */
 	public ImageIcon getPic() {
-		return new ImageIcon(pic.getImage());
+		if (pic != null) {
+			return new ImageIcon(pic.getImage());
+		}else {
+			return null;
+		}
 	}
 
 	/**

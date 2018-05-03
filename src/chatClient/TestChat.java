@@ -87,11 +87,14 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			});
 		}
 	}
-	
+
 	public void setResImg(User u) {
-		ImageIcon ic = new ImageIcon(receivers.getUser(0).getPic().getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
-		resIcon.setIcon(ic);
-		frame.repaint();
+		if (receivers.getUser(0).getPic() != null) {
+			ImageIcon ic = new ImageIcon(receivers.getUser(0).getPic().getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+			resIcon.setIcon(ic);
+			frame.repaint();
+			receivers.getUser(0).setPicure(ic);
+		}
 	}
 
 	/**
@@ -115,7 +118,7 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 	 */
 	private JPanel panelCenter() {
 		JPanel panel = new JPanel(new BorderLayout());
-		taMessage.setLayout(new BoxLayout(taMessage ,BoxLayout.Y_AXIS));
+		taMessage.setLayout(new BoxLayout(taMessage, BoxLayout.Y_AXIS));
 		scroll = new JScrollPane(taMessage);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		panel.setBackground(Color.WHITE);
@@ -152,15 +155,17 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
 			UserList sendList;
-			for(int i = 0; i < receivers.size();i++) {
+			for (int i = 0; i < receivers.size(); i++) {
+				System.out.println("sending chat");
 				sendList = new UserList();
 				sendList.addUser(receivers.getUser(i));
-				client.send(new UserMessage(client.getSelf(),sendList, message, sendingImage));
+				client.send(new UserMessage(client.getSelf(), sendList, message, sendingImage));
 			}
-			
-//			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 
-			taWrite.setText("");			
+			// client.send(new UserMessage(client.getSelf(), receivers, message,
+			// sendingImage));
+
+			taWrite.setText("");
 			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			sendingImage = null;
 		}
@@ -201,10 +206,11 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 	}
 
 	public void testPrint(UserMessage um) {
-		String message = (um.getUser().getName() + ":(" + um.getDelivered() + ")   "  + um.getContent() + "\n");
+		System.out.println(um.getUser().getName() + ":(" + um.getDelivered() + ")   " + um.getContent() + "\n");
+		String message = (um.getUser().getName() + ":(" + um.getDelivered() + ")   " + um.getContent() + "\n");
 		taMessage.add(new JLabel(message));
-		
-		if(um.getImage() != null) {
+
+		if (um.getImage() != null) {
 			taMessage.add(new JLabel(um.getImage()));
 		}
 		taMessage.revalidate();
@@ -219,13 +225,13 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 		if (arg1 instanceof UserMessage) {
 			UserMessage um = (UserMessage) arg1;
 			System.out.println(um.toString());
-			for (int i = 0; i < receivers.size(); i++) {
+			
 
 				if (um.getUser().getName().equals(lblReceiver.getText())) {
 					isReceiver = true;
-					testPrint(um);			
+					testPrint(um);
 				}
-			}
+			
 		}
 	}
 
@@ -237,10 +243,11 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 		return lblReceiver.getText();
 	}
 
-	public void keyTyped(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {
+	}
 
 	/**
-	 * Enable to press enter on keyboard to send messages 
+	 * Enable to press enter on keyboard to send messages
 	 */
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -248,20 +255,23 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
 			UserList sendList;
-			for(int i = 0; i < receivers.size();i++) {
+			for (int i = 0; i < receivers.size(); i++) {
+				System.out.println("sending chat");
 				sendList = new UserList();
 				sendList.addUser(receivers.getUser(i));
-				client.send(new UserMessage(client.getSelf(),sendList, message, sendingImage));
+				client.send(new UserMessage(client.getSelf(), sendList, message, sendingImage));
 			}
-			
-//			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+
+			// client.send(new UserMessage(client.getSelf(), receivers, message,
+			// sendingImage));
 
 			taWrite.setText("");
-			
+
 			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
 			sendingImage = null;
 		}
 	}
 
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+	}
 }
