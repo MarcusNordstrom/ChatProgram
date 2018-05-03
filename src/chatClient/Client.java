@@ -106,6 +106,12 @@ public class Client extends Observable {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * Goes through the entire existing OfflineList to check if the name you've entered in the Parameter
+	 * is in the list, if not return false.
+	 * @param Enter name you want to check.
+	 * @return True if the name exists in the list, false if it doesn't 
+	 */
 	public boolean isUserInOfflineList(String name) {
 		for(User friend : offlineList.getList()) {
 			if(friend.getName().equals(name))

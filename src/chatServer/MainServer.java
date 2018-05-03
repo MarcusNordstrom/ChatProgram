@@ -17,8 +17,7 @@ public class MainServer {
 		OfflineWriter ow = new OfflineWriter("files/OfflineMap.txt");
 		ServerUI sui = new ServerUI();
 		TCPServer tcpServer = new TCPServer(12345, 50, ow , sui);
-		JFrame frame = new JFrame();
-		
+		JFrame frame = new JFrame();	
 		frame.setPreferredSize(new Dimension(600, 400));
 		frame.add(sui);
 		frame.pack();

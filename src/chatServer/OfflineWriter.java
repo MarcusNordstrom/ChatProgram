@@ -113,21 +113,4 @@ public class OfflineWriter extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
-	public static void main(String[] args) {
-		OfflineWriter ow = new OfflineWriter("files/OfflineMap.txt");
-		ow.initfilesystem();
-		User user = new User("Bertil", null);
-		User userA[] = {user};
-		UserList userlist = new UserList(userA);
-		UserMessage usermessage = new UserMessage(user, userlist, "Hej", null);
-		ow.writeMessageToFile(usermessage, user);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(ow.getMessages(user));
-		ow.shutDown();
-	}
 }
