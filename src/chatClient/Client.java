@@ -87,45 +87,16 @@ public class Client extends Observable {
 	public void setOfflineList(UserList ul, UserList ol) {
 		String temp = "";
 		String old = "";
-		System.out.println("Offline 4");
-		try {
-			if (offlineList == null) {
-				offlineList = new UserList();
-				System.out.println("Empty OfflineList");
-				for(int i = 0; i < ul.getList().size(); i++) {
-					offlineList.addUser(ul.getUser(i));
-					System.out.println("Added: " + ul.getUser(i) + " to offlineList");
-				}
-			}else {
-				System.out.println("Offline 5");
-				User u;
-				for (int j = 0; j < ul.getList().size(); j++) {
-					u = null;
-					for (int i = 0; i < offlineList.getList().size(); i++) {
-						if(!(ul.getUser(j).getName()).equals(offlineList.getUser(i).getName())) {
-							u = ul.getUser(j);
-						}else {
-							u = null;
-						}
-					}
-					for (int i = 0; i < ol.getList().size(); i++) {
-						if(!ol.getUser(i).getName().equals(u.getName()) && u != null) {
-							u = null;
-							break;
-						}
-
-					}
-					if(u != null) {
-						offlineList.addUser(u);
+		for(User addingFriend : ul.getList()) {
+			for(User onlineList : ol.getList()) {
+				if(addingFriend.getName().equals(onlineList.getName())) {
+					if(!isUserInOfflineList(addingFriend.getName())) {
+						offlineList.addUser(addingFriend);
 					}
 				}
 			}
-
-			uiUser.updateOffline(offlineList);
-		} catch (NullPointerException e) {
-			System.err.println(e.toString());
 		}
-
+		uiUser.updateOffline(offlineList);
 		try {
 			ObjectOutputStream foos = new ObjectOutputStream(new FileOutputStream("files/LocalOfflineMap.txt"));
 			foos.writeObject(offlineList);
@@ -134,6 +105,13 @@ public class Client extends Observable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public boolean isUserInOfflineList(String name) {
+		for(User friend : offlineList.getList()) {
+			if(friend.getName().equals(name))
+				return true;
+		}
+		return false;
 	}
 
 	/**
