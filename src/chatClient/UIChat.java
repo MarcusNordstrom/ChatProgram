@@ -256,7 +256,7 @@ public class UIChat extends JPanel implements ActionListener, KeyListener, Obser
 			String message = taWrite.getText().trim();
 			System.out.println("2 " + message);
 			client.send(new UserMessage(client.getSelf(), receivers, message, sendingImage));
-
+			sendingImage = null;
 			taWrite.setText("");
 			testPrint((new UserMessage(client.getSelf(), receivers, message, sendingImage)));
 		}
