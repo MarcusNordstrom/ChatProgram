@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import java.time.*;
@@ -65,7 +66,7 @@ public class TCPServer {
 	 * Returns time right now i a format : yyyy/MM/dd\\HH:mm:ss.
 	 */
 	public String time() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd\\HH:mm:ss");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		return dtf.format(now);
 	}
@@ -120,7 +121,7 @@ public class TCPServer {
 				objectOutputStream.writeObject(onlineList);
 				objectOutputStream.flush();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println("Could not establish connection with client");
 			}
 		}
 
@@ -161,6 +162,7 @@ public class TCPServer {
 							System.out.println("\n----NEW MESSAGE INFO----");
 							logg.add(time() + ";;    " +"UserMessage object recived \n;;");
 							doLogg();
+							msg.setReceived(time());
 							System.out.println(msg);
 							sendMsg(msg);
 
@@ -200,7 +202,6 @@ public class TCPServer {
 				System.err.println("Could not read Object.");
 				System.err.println(e.getClass().toString());
 				System.err.flush();
-				e.printStackTrace();
 			}
 			System.out.flush();
 		}
@@ -219,6 +220,7 @@ public class TCPServer {
 		public void sendMsg(UserMessage msg) {
 			for (User client : msg.getReceivers().getList()) {
 				if (onlineMap.containsKey(client)) {
+					msg.setDelivered(time());
 					onlineMap.get(client).sendUserMessage(msg);
 				}else {
 					System.err.println("User not in the list\nSaving to offline list");
@@ -245,6 +247,7 @@ public class TCPServer {
 			if(offline.checkName(user.getName())) {
 				System.out.println("User has offline messages!\nSending offline messages...");
 				for(UserMessage message : offline.receive(user.getName())) {
+					message.setDelivered(time());
 					onlineMap.get(user).sendUserMessage(message);
 				}
 			}
