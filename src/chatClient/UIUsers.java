@@ -19,7 +19,6 @@ import javax.swing.event.ListSelectionListener;
 
 import resources.UserList;
 import resources.UserMessage;
-import resources.SaveContacts;
 import resources.User;
 
 /**

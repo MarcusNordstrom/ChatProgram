@@ -78,7 +78,7 @@ public class OfflineMessages {
 	 *            The name you want to check.
 	 * @return
 	 */
-	private boolean checkName(String param) {
+	public boolean checkName(String param) {
 		for (UserMessage message : storedMessages) {
 			if (message.getReceivers().getUser(0).getName().equals(param))
 				return true;
@@ -102,7 +102,7 @@ public class OfflineMessages {
 	 * A function used to call and save the current ArrayList of messages to the
 	 * textFile anytime a new one is added or removed.
 	 */
-	private void saveFile() {
+	public void saveFile() {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath, false))) {
 			oos.writeObject(storedMessages);
 			oos.reset();
@@ -115,7 +115,7 @@ public class OfflineMessages {
 	/**
 	 * Reads through the .txt file and sets its content to the instance ArrayList.
 	 */
-	private void readFile() {
+	public void readFile() {
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
 			storedMessages = (ArrayList<UserMessage>) ois.readObject();
 		} catch (IOException | ClassNotFoundException e) {
