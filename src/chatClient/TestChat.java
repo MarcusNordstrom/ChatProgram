@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Observable;
 import java.util.Observer;
 import javax.imageio.ImageIO;
@@ -166,7 +168,12 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			// sendingImage));
 
 			taWrite.setText("");
-			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			UserMessage temp = new UserMessage(client.getSelf(), receivers, message, sendingImage);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			temp.setDelivered(dtf.format(now));
+			testPrint(temp);
+			
 			sendingImage = null;
 		}
 		if (e.getSource() == btnAppend) {
@@ -266,8 +273,11 @@ public class TestChat extends JPanel implements ActionListener, KeyListener, Obs
 			// sendingImage));
 
 			taWrite.setText("");
-
-			testPrint(new UserMessage(client.getSelf(), receivers, message, sendingImage));
+			UserMessage temp = new UserMessage(client.getSelf(), receivers, message, sendingImage);
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			temp.setDelivered(dtf.format(now));
+			testPrint(temp);
 			sendingImage = null;
 		}
 	}
