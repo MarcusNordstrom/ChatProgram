@@ -66,7 +66,7 @@ public class TCPServer {
 	 * Returns time right now i a format : yyyy/MM/dd\\HH:mm:ss.
 	 */
 	public String time() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd\\HH:mm:ss");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		return dtf.format(now);
 	}
@@ -121,7 +121,7 @@ public class TCPServer {
 				objectOutputStream.writeObject(onlineList);
 				objectOutputStream.flush();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println("Could not establish connection with client");
 			}
 		}
 
@@ -202,7 +202,6 @@ public class TCPServer {
 				System.err.println("Could not read Object.");
 				System.err.println(e.getClass().toString());
 				System.err.flush();
-				e.printStackTrace();
 			}
 			System.out.flush();
 		}
